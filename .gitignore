@@ -1,0 +1,7 @@
+.idea/
+out/
+.gradle
+**/build/
+!src/**/build/
+/kotlin-js-store
+/dockers/arcadedb/
