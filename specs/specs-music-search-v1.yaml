@@ -1,0 +1,494 @@
+openapi: 3.0.4
+info:
+  title: Music search
+  description: This service helps in finding music
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: https://localhost/v1
+tags:
+  - name: composition
+    description: Composition discussion
+paths:
+  /composition/discussion:
+    post:
+      tags:
+        - composition
+      summary: Reads the music composition discussion
+      operationId: compositionDiscussionRead
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscussionReadRequest'
+        required: true
+      responses:
+        200:
+          description: Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscussionReadResponse'
+
+  /composition/create:
+    post:
+      tags:
+        - composition
+      summary: Creates a music composition and creates a new discussion
+      operationId: compositionCreate
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompositionCreateRequest'
+        required: true
+      responses:
+        200:
+          description: Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompositionCreateResponse'
+
+  /composition/comment:
+    post:
+      tags:
+        - composition
+      summary: Adds comment to composition discussion
+      operationId: commentAdd
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentAddRequest'
+        required: true
+      responses:
+        200:
+          description: Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentAddResponse'
+
+  /composition/accept:
+    post:
+      tags:
+        - composition
+      summary: Accepts comment
+      operationId: commentAccept
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentAcceptRequest'
+        required: true
+      responses:
+        200:
+          description: Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentAcceptResponse'
+
+  /composition/decline:
+    post:
+      tags:
+        - composition
+      summary: Declines comment
+      operationId: commentDecline
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentDeclineRequest'
+        required: true
+      responses:
+        200:
+          description: Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentDeclineResponse'
+
+  /composition/search:
+    post:
+      tags:
+        - composition
+      summary: Searches a music composition
+      operationId: musicView
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompositionSearchRequest'
+        required: true
+      responses:
+        200:
+          description: Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompositionSearchResponse'
+
+components:
+  schemas:
+    IRequest:
+      type: object
+      description: Базовый интерфейс для всех запросов
+      properties:
+        requestType:
+          type: string
+          description: Поле-дескриминатор для вычисления типа запроса
+          example: create
+        requestId:
+          type: string
+          description: Идентификатор запроса для отладки
+      discriminator:
+        propertyName: requestType
+        mapping:
+          read: '#/components/schemas/DiscussionReadRequest'
+          create:   '#/components/schemas/CompositionCreateRequest'
+          comment: '#/components/schemas/CommentAddRequest'
+          accept: '#/components/schemas/CommentAcceptRequest'
+          decline: '#/components/schemas/CommentDeclineRequest'
+          search: '#/components/schemas/CompositionSearchRequest'
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        group:
+          type: string
+        field:
+          type: string
+        message:
+          type: string
+
+    ResponseResult:
+      type: string
+      enum:
+        - success
+        - error
+
+    IResponse:
+      type: object
+      description: Базовый интерфейс для всех ответов
+      properties:
+        responseType:
+          type: string
+          description: Поле-дескриминатор для вычисления типа запроса
+          example: create
+        requestId:
+          type: string
+          description: Идентификатор запроса для отладки
+        result:
+          $ref: '#/components/schemas/ResponseResult'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+
+      discriminator:
+        propertyName: responseType
+        mapping:
+          read:   '#/components/schemas/DiscussionReadResponse'
+          create: '#/components/schemas/CompositionCreateResponse'
+          comment: '#/components/schemas/CommentAddResponse'
+          accept: '#/components/schemas/CommentAcceptResponse'
+          decline: '#/components/schemas/CommentDeclineResponse'
+          search: '#/components/schemas/CompositionSearchResponse'
+
+    UserId:
+      type: string
+      description: User id
+
+    CompositionId:
+      type: string
+      description: Music composition id
+
+    CompositionLock:
+      type: string
+      description: Version of optimistic lock
+
+    CommentId:
+      type: string
+      description: Comment in discussion id
+
+    BaseComposition:
+      type: object
+      description: Object that describes common properties for read and create
+      properties:
+        fileName:
+          type: string
+          description: File name
+        file:
+          type: string
+          format: byte
+          description: Music composition
+        creator:
+          $ref: '#/components/schemas/UserId'
+        status:
+          $ref: '#/components/schemas/DiscussionStatus'
+
+    DiscussionStatus:
+      type: string
+      description: 'Discussion status: open or closed'
+      enum:
+        - open
+        - closed
+
+    CompositionInfo:
+      type: object
+      description: Full info about composition
+      properties:
+        id:
+          $ref: '#/components/schemas/CompositionId'
+        composition:
+          $ref: '#/components/schemas/BaseComposition'
+        lock:
+          $ref: '#/components/schemas/CompositionLock'
+
+    BaseComment:
+      type: object
+      description: 'Comment to music composition'
+      properties:
+        author:
+          $ref: '#/components/schemas/UserId'
+        text:
+          type: string
+          description: 'Comment text'
+        status:
+          $ref: '#/components/schemas/CommentStatus'
+
+    CommentStatus:
+      type: string
+      description: 'Comment status: accepted or declined'
+      enum:
+        - none
+        - accepted
+        - declined
+
+    CommentInfo:
+      type: object
+      description: Comment and its ID
+      properties:
+        id:
+          $ref: '#/components/schemas/CommentId'
+        comment:
+          $ref: '#/components/schemas/BaseComment'
+
+    CompositionCreateObject:
+      allOf:
+        - $ref: '#/components/schemas/BaseComposition'
+
+    CompositionCreateRequest:
+      allOf:
+        - $ref: '#/components/schemas/IRequest'
+        - $ref: '#/components/schemas/CompositionRequestDebug'
+        - type: object
+          properties:
+            composition:
+              $ref: '#/components/schemas/CompositionCreateObject'
+
+    DiscussionReadObject:
+      allOf:
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/CompositionId'
+
+    DiscussionReadRequest:
+      allOf:
+        - $ref: '#/components/schemas/IRequest'
+        - $ref: '#/components/schemas/CompositionRequestDebug'
+        - type: object
+          properties:
+            composition:
+              $ref: '#/components/schemas/DiscussionReadObject'
+
+    CommentAddObject:
+      allOf:
+        - type: object
+          properties: 
+            composition-id:
+              $ref: '#/components/schemas/CompositionId'
+            comment:
+              $ref: '#/components/schemas/BaseComment'
+
+    CommentAddRequest:
+      allOf:
+        - $ref: '#/components/schemas/IRequest'
+        - $ref: '#/components/schemas/CompositionRequestDebug'
+        - type: object
+          properties:
+            composition:
+              $ref: '#/components/schemas/CommentAddObject'
+
+    CommentAcceptObject:
+      allOf:
+        - type: object
+          properties:
+            composition-id:
+              $ref: '#/components/schemas/CompositionId'
+            comment-id:
+              $ref: '#/components/schemas/CommentId'
+            lock:
+              $ref: '#/components/schemas/CompositionLock'
+
+    CommentAcceptRequest:
+      allOf:
+        - $ref: '#/components/schemas/IRequest'
+        - $ref: '#/components/schemas/CompositionRequestDebug'
+        - type: object
+          properties:
+            composition:
+              $ref: '#/components/schemas/CommentAcceptObject'
+
+    CommentDeclineObject:
+      allOf:
+        - type: object
+          properties:
+            composition-id:
+              $ref: '#/components/schemas/CompositionId'
+            comment-id:
+              $ref: '#/components/schemas/CommentId'
+
+    CommentDeclineRequest:
+      allOf:
+        - $ref: '#/components/schemas/IRequest'
+        - $ref: '#/components/schemas/CompositionRequestDebug'
+        - type: object
+          properties:
+            composition:
+              $ref: '#/components/schemas/CommentDeclineObject'
+
+    CompositionSearchFilter:
+      type: object
+      description: Set of search filters
+      properties:
+        searchString:
+          type: string
+          description: Search field
+        discussionStatus:
+          $ref: '#/components/schemas/DiscussionStatus'
+
+    CompositionSearchRequest:
+      allOf:
+        - $ref: '#/components/schemas/IRequest'
+        - $ref: '#/components/schemas/CompositionRequestDebug'
+        - type: object
+          properties:
+            filter:
+              $ref: '#/components/schemas/CompositionSearchFilter'
+
+    CompositionInfoResponseSingle:
+      allOf:
+        - type: object
+          description: Single composition info
+          properties:
+            composition-info:
+              $ref: '#/components/schemas/CompositionInfo'
+
+    CompositionInfoResponseMulti:
+      allOf:
+        - type: object
+          description: List of compositions
+          properties:
+            comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/CompositionInfo'
+
+    CommentResponseSingle:
+      allOf:
+        - type: object
+          description: Single comment info
+          properties:
+            comment-info:
+              $ref: '#/components/schemas/CommentInfo'
+
+    CommentResponseMulti:
+      allOf:
+        - type: object
+          description: List of comments
+          properties:
+            comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/CommentInfo'
+
+    DiscussionReadResponse:
+      allOf:
+        - $ref: '#/components/schemas/IResponse'
+        - $ref: '#/components/schemas/CompositionInfoResponseSingle'
+        - $ref: '#/components/schemas/CommentResponseMulti'
+
+    CompositionCreateResponse:
+      allOf:
+        - $ref: '#/components/schemas/IResponse'
+        - $ref: '#/components/schemas/CompositionInfoResponseSingle'
+
+    CommentAddResponse:
+      allOf:
+        - $ref: '#/components/schemas/IResponse'
+        - $ref: '#/components/schemas/CommentResponseSingle'
+
+    CommentAcceptResponse:
+      allOf:
+        - $ref: '#/components/schemas/IResponse'
+        - $ref: '#/components/schemas/CompositionInfoResponseSingle'
+        - $ref: '#/components/schemas/CommentResponseMulti'
+
+    CommentDeclineResponse:
+      allOf:
+        - $ref: '#/components/schemas/IResponse'
+        - $ref: '#/components/schemas/CommentResponseSingle'
+
+    CompositionSearchResponse:
+      allOf:
+        - $ref: '#/components/schemas/IResponse'
+        - $ref: '#/components/schemas/CompositionInfoResponseMulti'
+
+    # STUBS ======================
+    CompositionRequestDebugMode:
+      type: string
+      enum:
+        - prod
+        - test
+        - stub
+
+    CompositionRequestDebug:
+      type: object
+      properties:
+        debug:
+          $ref: '#/components/schemas/CompositionDebug'
+
+    CompositionDebug:
+      type: object
+      properties:
+        mode:
+          $ref: '#/components/schemas/CompositionRequestDebugMode'
+        stub:
+          $ref: '#/components/schemas/CompositionRequestDebugStubs'
+
+    CompositionRequestDebugStubs:
+      type: string
+      description: List of all stubs
+      enum:
+        - success
+        - notFound
+        - badId
+        - badTitle
+        - badDescription
+        - badVisibility
+        - cannotDelete
+        - badSearchString

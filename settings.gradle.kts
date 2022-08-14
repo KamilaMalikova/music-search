@@ -15,3 +15,4 @@ pluginManagement {
 
     }
 }
+include("music-search-api-v1-jackson")

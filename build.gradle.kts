@@ -3,7 +3,7 @@ plugins {
     kotlin("multiplatform") apply false
 }
 
-group = "com.camila"
+group = "ru.otus.music.search"
 version = "1.0-SNAPSHOT"
 
 allprojects {
