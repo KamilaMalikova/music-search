@@ -23,7 +23,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DiscussionReadRequest'
+              $ref: '#/components/schemas/CompositionReadRequest'
         required: true
       responses:
         200:
@@ -31,7 +31,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DiscussionReadResponse'
+                $ref: '#/components/schemas/CompositionReadResponse'
 
   /composition/create:
     post:
@@ -154,7 +154,7 @@ components:
       discriminator:
         propertyName: requestType
         mapping:
-          read: '#/components/schemas/DiscussionReadRequest'
+          read: '#/components/schemas/CompositionReadRequest'
           create:   '#/components/schemas/CompositionCreateRequest'
           comment: '#/components/schemas/CommentAddRequest'
           accept: '#/components/schemas/CommentAcceptRequest'
@@ -200,7 +200,7 @@ components:
       discriminator:
         propertyName: responseType
         mapping:
-          read:   '#/components/schemas/DiscussionReadResponse'
+          read:   '#/components/schemas/CompositionReadResponse'
           create: '#/components/schemas/CompositionCreateResponse'
           comment: '#/components/schemas/CommentAddResponse'
           accept: '#/components/schemas/CommentAcceptResponse'
@@ -299,21 +299,21 @@ components:
             composition:
               $ref: '#/components/schemas/CompositionCreateObject'
 
-    DiscussionReadObject:
+    CompositionReadObject:
       allOf:
         - type: object
           properties:
             id:
               $ref: '#/components/schemas/CompositionId'
 
-    DiscussionReadRequest:
+    CompositionReadRequest:
       allOf:
         - $ref: '#/components/schemas/IRequest'
         - $ref: '#/components/schemas/CompositionRequestDebug'
         - type: object
           properties:
             composition:
-              $ref: '#/components/schemas/DiscussionReadObject'
+              $ref: '#/components/schemas/CompositionReadObject'
 
     CommentAddObject:
       allOf:
@@ -375,11 +375,10 @@ components:
       type: object
       description: Set of search filters
       properties:
-        searchString:
-          type: string
-          description: Search field
         discussionStatus:
           $ref: '#/components/schemas/DiscussionStatus'
+        creator:
+          $ref: '#/components/schemas/UserId'
 
     CompositionSearchRequest:
       allOf:
@@ -403,7 +402,7 @@ components:
         - type: object
           description: List of compositions
           properties:
-            comments:
+            compositions:
               type: array
               items:
                 $ref: '#/components/schemas/CompositionInfo'
@@ -426,7 +425,7 @@ components:
               items:
                 $ref: '#/components/schemas/CommentInfo'
 
-    DiscussionReadResponse:
+    CompositionReadResponse:
       allOf:
         - $ref: '#/components/schemas/IResponse'
         - $ref: '#/components/schemas/CompositionInfoResponseSingle'

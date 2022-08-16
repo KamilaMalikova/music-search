@@ -20,7 +20,6 @@ class SerializationTest {
     @Test
     fun serializationTest() {
         val json = apiV1Mapper.writeValueAsString(create)
-
         assertContains(json, Regex("\"fileName\":\\s*\"123\""))
         assertContains(json, Regex("\"mode\":\\s*\"stub\""))
         assertContains(json, Regex("\"stub\":\\s*\"badTitle\""))

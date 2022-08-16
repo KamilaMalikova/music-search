@@ -16,3 +16,5 @@ pluginManagement {
     }
 }
 include("music-search-api-v1-jackson")
+include("music-search-common")
+include("music-search-mappers-v1")
