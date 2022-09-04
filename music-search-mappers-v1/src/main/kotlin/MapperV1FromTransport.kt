@@ -19,6 +19,7 @@ import ru.otus.music.search.api.v1.models.CompositionSearchFilter
 import ru.otus.music.search.api.v1.models.CompositionSearchRequest
 import ru.otus.music.search.api.v1.models.DiscussionStatus
 import ru.otus.music.search.api.v1.models.IRequest
+import ru.otus.music.search.common.EMPTY_FILE
 import ru.otus.music.search.common.MsContext
 import ru.otus.music.search.common.models.MsCommand
 import ru.otus.music.search.common.models.MsComment
@@ -55,8 +56,8 @@ private fun String?.toUserId() =
 private fun String?.toCompositionId() =
     this?.let { MsCompositionId(it) } ?: MsCompositionId.NONE
 
-private fun String.toCommentId() =
-    MsCommentId(this)
+private fun String?.toCommentId() =
+    this?.let { MsCommentId(it) } ?: MsCommentId.NONE
 
 
 private fun CompositionDebug?.transportToWorkMode(): MsWorkMode =
@@ -82,11 +83,9 @@ private fun CompositionDebug?.transportToStubCase(): MsStub = when(this?.stub) {
 private fun CompositionCreateObject.toInternal() =
     MsCompositionDiscussion(
         composition = MsComposition(
-            fileName = this.fileName ?: "",
-            file = this.file ?: byteArrayOf()
+            file = this.file ?: EMPTY_FILE
         )
     )
-
 
 fun MsContext.fromTransport(request: CompositionCreateRequest) {
     command = MsCommand.CREATE
@@ -99,7 +98,7 @@ fun MsContext.fromTransport(request: CompositionCreateRequest) {
 
 private fun CompositionReadObject.toInternal() =
     MsCompositionDiscussion(
-        composition = MsComposition(id.toCompositionId())
+        composition = MsComposition(id = id.toCompositionId())
     )
 
 fun MsContext.fromTransport(request: CompositionReadRequest) {
@@ -144,7 +143,7 @@ fun MsContext.fromTransport(request: CommentAddRequest) {
 private fun CommentAcceptObject.toInternal() =
     MsCompositionDiscussion(
         composition = MsComposition(id = compositionId.toCompositionId()),
-        comment = MsComment(commentId?.toCommentId() ?: MsCommentId.NONE)
+        comment = MsComment(id = commentId.toCommentId())
     )
 
 fun MsContext.fromTransport(request: CommentAcceptRequest) {
@@ -158,7 +157,7 @@ fun MsContext.fromTransport(request: CommentAcceptRequest) {
 private fun CommentDeclineObject.toInternal() =
     MsCompositionDiscussion(
         composition = MsComposition(id = compositionId.toCompositionId()),
-        comment = MsComment(commentId?.toCommentId() ?: MsCommentId.NONE)
+        comment = MsComment(id = commentId.toCommentId())
     )
 
 fun MsContext.fromTransport(request: CommentDeclineRequest) {

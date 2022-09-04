@@ -75,7 +75,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CommentAddResponse'
 
-  /composition/accept:
+  /composition/comment/accept:
     post:
       tags:
         - composition
@@ -96,7 +96,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CommentAcceptResponse'
 
-  /composition/decline:
+  /composition/comment/decline:
     post:
       tags:
         - composition
@@ -227,14 +227,11 @@ components:
       type: object
       description: Object that describes common properties for read and create
       properties:
-        fileName:
-          type: string
-          description: File name
         file:
           type: string
-          format: byte
+          format: binary
           description: Music composition
-        creator:
+        owner:
           $ref: '#/components/schemas/UserId'
         status:
           $ref: '#/components/schemas/DiscussionStatus'

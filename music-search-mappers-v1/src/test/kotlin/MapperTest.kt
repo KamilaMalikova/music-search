@@ -17,6 +17,7 @@ import ru.otus.music.search.common.models.MsRequestId
 import ru.otus.music.search.common.models.MsState
 import ru.otus.music.search.common.models.MsWorkMode
 import ru.otus.music.search.common.stubs.MsStub
+import java.io.File
 import kotlin.test.assertEquals
 
 class MapperTest {
@@ -29,8 +30,7 @@ class MapperTest {
                 stub = CompositionRequestDebugStubs.SUCCESS,
             ),
             composition = CompositionCreateObject(
-                fileName = "title",
-                file = byteArrayOf()
+                file = TEST_FILE
             )
         )
 
@@ -39,8 +39,7 @@ class MapperTest {
 
         assertEquals(MsStub.SUCCESS, context.stubCase)
         assertEquals(MsWorkMode.STUB, context.workMode)
-        assertEquals("title", context.msRequest.composition.fileName)
-        assertEquals(0, context.msRequest.composition.file.size)
+        assertEquals(TEST_FILE, context.msRequest.composition.file)
     }
 
     @Test
@@ -71,5 +70,9 @@ class MapperTest {
         assertEquals("request", res.errors?.firstOrNull()?.group)
         assertEquals("title", res.errors?.firstOrNull()?.field)
         assertEquals("wrong title", res.errors?.firstOrNull()?.message)
+    }
+
+    private companion object {
+        val TEST_FILE = File("${System.getProperty("user.dir")}/test-file")
     }
 }

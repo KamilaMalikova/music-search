@@ -41,7 +41,7 @@ private fun String.takeIfNotBlank() =
 private fun MsComposition.toCompositionInfo() =
     CompositionInfo(
         id = id.asString().takeIfNotBlank(),
-        composition = BaseComposition(fileName, file)
+        composition = BaseComposition(file)
     )
 
 private fun MsContext.toTransportCreate() =
