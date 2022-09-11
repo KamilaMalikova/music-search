@@ -5,5 +5,6 @@ import java.io.File
 
 data class MsComposition (
     var id: MsCompositionId = MsCompositionId.NONE,
+    var owner: MsUserId = MsUserId.NONE,
     var file: File = EMPTY_FILE,
 )

@@ -5,6 +5,7 @@ pluginManagement {
         val kotlinVersion: String by settings
         val kotestVersion: String by settings
         val openapiVersion: String by settings
+        val bmuschkoVersion: String by settings
 
         kotlin("jvm") version kotlinVersion apply false
         kotlin("multiplatform") version kotlinVersion apply false
@@ -12,9 +13,12 @@ pluginManagement {
         kotlin("plugin.serialization") version kotlinVersion apply false
 
         id("org.openapi.generator") version openapiVersion apply false
-
+        id("com.bmuschko.docker-java-application") version bmuschkoVersion apply false
+        id("com.bmuschko.docker-remote-api") version bmuschkoVersion apply false
     }
 }
 include("music-search-api-v1-jackson")
 include("music-search-common")
 include("music-search-mappers-v1")
+include("music-search-app-ktor")
+include("music-search-stubs")

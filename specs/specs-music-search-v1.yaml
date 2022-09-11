@@ -374,7 +374,7 @@ components:
       properties:
         discussionStatus:
           $ref: '#/components/schemas/DiscussionStatus'
-        creator:
+        owner:
           $ref: '#/components/schemas/UserId'
 
     CompositionSearchRequest:

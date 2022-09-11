@@ -178,11 +178,11 @@ private fun DiscussionStatus?.transportToMsStatus(): MsDiscussionStatus =
 private fun CompositionSearchFilter.toInternal() =
     MsFilter(
         discussionStatus = discussionStatus.transportToMsStatus(),
-        creatorId = creator.toUserId()
+        ownerId = owner.toUserId()
     )
 
 fun MsContext.fromTransport(request: CompositionSearchRequest) {
-    command = MsCommand.DECLINE
+    command = MsCommand.SEARCH
     requestId = request.requestId()
     filterRequest = request.filter?.toInternal() ?: MsFilter()
     workMode = request.debug.transportToWorkMode()
