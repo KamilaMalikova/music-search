@@ -8,7 +8,7 @@ import ru.otus.music.search.common.models.MsDiscussionStatus
 import ru.otus.music.search.common.models.MsUserId
 
 object MsCompositionDiscussionStub {
-    fun get(): MsCompositionDiscussion = DISCUSSION_BOLT1.copy()
+    fun get(): MsCompositionDiscussion = DISCUSSION_BOLT1
 
     fun prepareSearchList(status: MsDiscussionStatus, owner: MsUserId) = mutableListOf(
         prepareDiscussion(DISCUSSION_BOLT1, MsComposition(MsCompositionId("1"), owner), status),
