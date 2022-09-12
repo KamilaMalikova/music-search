@@ -64,7 +64,7 @@ class V1StubTest {
 
         assertEquals(200, response.status.value)
         assertEquals("123", responseObject.requestId)
-        assertEquals("1234", responseObject.compositionInfo!!.id)
+        assertEquals("1234", responseObject.compositionInfo?.id)
     }
 
     @Test
@@ -91,8 +91,8 @@ class V1StubTest {
 
         assertEquals(200, response.status.value)
         assertEquals("123", responseObject.requestId)
-        assertEquals("1234", responseObject.compositionInfo!!.id)
-        assertEquals(2, responseObject.comments!!.size)
+        assertEquals("1234", responseObject.compositionInfo?.id)
+        assertEquals(2, responseObject.comments?.size)
     }
 
     @Test
@@ -124,10 +124,10 @@ class V1StubTest {
 
         assertEquals(200, response.status.value)
         assertEquals("123", responseObject.requestId)
-        assertEquals("987", responseObject.commentInfo!!.id)
-        assertEquals("Rise of The King", responseObject.commentInfo!!.comment!!.text)
-        assertEquals("963", responseObject.commentInfo!!.comment!!.author)
-        assertEquals(CommentStatus.NONE, responseObject.commentInfo!!.comment!!.status)
+        assertEquals("987", responseObject.commentInfo?.id)
+        assertEquals("Rise of The King", responseObject.commentInfo?.comment?.text)
+        assertEquals("963", responseObject.commentInfo?.comment?.author)
+        assertEquals(CommentStatus.NONE, responseObject.commentInfo?.comment?.status)
     }
 
     @Test
@@ -155,8 +155,8 @@ class V1StubTest {
 
         assertEquals(200, response.status.value)
         assertEquals("123", responseObject.requestId)
-        assertEquals("1234", responseObject.compositionInfo!!.id)
-        assertEquals(2, responseObject.comments!!.size)
+        assertEquals("1234", responseObject.compositionInfo?.id)
+        assertEquals(2, responseObject.comments?.size)
     }
 
     @Test
@@ -184,7 +184,7 @@ class V1StubTest {
 
         assertEquals(200, response.status.value)
         assertEquals("123", responseObject.requestId)
-        assertEquals("987", responseObject.commentInfo!!.id)
+        assertEquals("987", responseObject.commentInfo?.id)
     }
 
     @Test
@@ -212,11 +212,11 @@ class V1StubTest {
 
         assertEquals(200, response.status.value)
         assertEquals("123", responseObject.requestId)
-        assertEquals(4, responseObject.compositions!!.size)
+        assertEquals(4, responseObject.compositions?.size)
 
-        val firstComposition = responseObject.compositions!![0]
-        assertEquals("1", firstComposition.id)
-        assertEquals("123", firstComposition.composition!!.owner)
+        val firstComposition = responseObject.compositions?.get(0)
+        assertEquals("1", firstComposition?.id)
+        assertEquals("123", firstComposition?.composition?.owner)
     }
 
     private fun ApplicationTestBuilder.myClient() = createClient {

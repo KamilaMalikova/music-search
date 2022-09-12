@@ -32,10 +32,7 @@ fun Application.module() {
     install(WebSockets)
 
     install(CORS) {
-        allowMethod(HttpMethod.Options)
-        allowMethod(HttpMethod.Put)
-        allowMethod(HttpMethod.Delete)
-        allowMethod(HttpMethod.Patch)
+        allowMethod(HttpMethod.Post)
         allowHeader(HttpHeaders.Authorization)
         allowHeader("MyCustomHeader")
         allowCredentials = true

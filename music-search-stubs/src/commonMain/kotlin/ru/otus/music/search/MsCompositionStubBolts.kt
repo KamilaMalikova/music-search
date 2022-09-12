@@ -10,20 +10,21 @@ import ru.otus.music.search.common.models.MsDiscussionStatus
 import ru.otus.music.search.common.models.MsUserId
 
 object MsCompositionStubBolts {
-    val DISCUSSION_BOLT1 = MsCompositionDiscussion(
-        composition = MsComposition(
-            id = MsCompositionId("1234"),
-            owner = MsUserId("567")
-        ),
-        comment= MsComment(
-            id = MsCommentId("987"),
-            author = MsUserId("963"),
-            text = "Rise of The King",
-            status = MsCommentStatus.NONE
-        ),
-        comments = comments,
-        status = MsDiscussionStatus.OPEN
-    )
+    val DISCUSSION_BOLT1
+        get() = MsCompositionDiscussion(
+            composition = MsComposition(
+                id = MsCompositionId("1234"),
+                owner = MsUserId("567")
+            ),
+            comment= MsComment(
+                id = MsCommentId("987"),
+                author = MsUserId("963"),
+                text = "Rise of The King",
+                status = MsCommentStatus.NONE
+            ),
+            comments = comments,
+            status = MsDiscussionStatus.OPEN
+        )
 
     private val comments: MutableSet<MsComment>
         get() = mutableSetOf(

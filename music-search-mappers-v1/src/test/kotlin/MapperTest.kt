@@ -64,7 +64,7 @@ class MapperTest {
         val res = context.toTransport() as CompositionCreateResponse
 
         assertEquals("1234", res.requestId)
-        assertEquals("1265", res.compositionInfo!!.id)
+        assertEquals("1265", res.compositionInfo?.id)
         assertEquals(1, res.errors?.size)
         assertEquals("err", res.errors?.firstOrNull()?.code)
         assertEquals("request", res.errors?.firstOrNull()?.group)
