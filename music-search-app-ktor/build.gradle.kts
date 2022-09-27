@@ -36,6 +36,11 @@ kotlin {
 
                 implementation(project(":music-search-common"))
                 implementation(project(":music-search-stubs"))
+                implementation(project(":music-search-app-biz"))
+
+                implementation(ktor("content-negotiation")) // io.ktor:ktor-server-content-negotiation
+                implementation(ktor("cors")) // "io.ktor:ktor-cors:$ktorVersion"
+                implementation(ktor("caching-headers"))
 
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
@@ -56,13 +61,12 @@ kotlin {
                 // jackson
                 implementation(ktor("jackson", "serialization")) // io.ktor:ktor-serialization-jackson
 
-                implementation(ktor("content-negotiation")) // io.ktor:ktor-server-content-negotiation
 
                 implementation(ktor("locations"))
-                implementation(ktor("caching-headers"))
+
                 implementation(ktor("call-logging"))
                 implementation(ktor("auto-head-response"))
-                implementation(ktor("cors")) // "io.ktor:ktor-cors:$ktorVersion"
+
                 implementation(ktor("default-headers")) // "io.ktor:ktor-cors:$ktorVersion"
 
                 implementation(ktor("websockets")) // "io.ktor:ktor-websockets:$ktorVersion"

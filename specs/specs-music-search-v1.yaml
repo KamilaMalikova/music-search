@@ -483,8 +483,7 @@ components:
         - success
         - notFound
         - badId
-        - badTitle
-        - badDescription
-        - badVisibility
+        - dbError
+        - badText
         - cannotDelete
         - badSearchString

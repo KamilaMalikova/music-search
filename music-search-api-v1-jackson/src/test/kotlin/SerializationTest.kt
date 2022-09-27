@@ -11,7 +11,7 @@ class SerializationTest {
         requestType = "create",
         debug = CompositionDebug(
             mode = CompositionRequestDebugMode.STUB,
-            stub = CompositionRequestDebugStubs.BAD_TITLE
+            stub = CompositionRequestDebugStubs.BAD_ID
         ),
         composition = CompositionCreateObject(
             file = TEST_FILE,
@@ -24,7 +24,7 @@ class SerializationTest {
         val json = apiV1Mapper.writeValueAsString(create)
         assertContains(json, Regex("\"owner\":\\s*\"owner\""))
         assertContains(json, Regex("\"mode\":\\s*\"stub\""))
-        assertContains(json, Regex("\"stub\":\\s*\"badTitle\""))
+        assertContains(json, Regex("\"stub\":\\s*\"badId\""))
         assertContains(json, Regex("\"requestType\":\\s*\"create\""))
     }
 

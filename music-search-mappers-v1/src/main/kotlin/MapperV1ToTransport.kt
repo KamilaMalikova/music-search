@@ -125,9 +125,8 @@ private fun List<MsCompositionDiscussion>.toTransportCompositions() =
     this.map { it.composition.toCompositionInfo() }
         .toList()
 
-// почему множество ошибок
-private fun List<MsError>.toTransportErrors(): List<Error>? = this
-    .map { it.toTransportAd() }
+private fun List<MsError>.toTransportErrors(): List<Error>? =
+    this.map { it.toTransportAd() }
     .toList()
     .takeIf { it.isNotEmpty() }
 

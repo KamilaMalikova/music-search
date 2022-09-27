@@ -91,7 +91,7 @@ class V1StubTest {
 
         assertEquals(200, response.status.value)
         assertEquals("123", responseObject.requestId)
-        assertEquals("1234", responseObject.compositionInfo?.id)
+        assertEquals("123", responseObject.compositionInfo?.id)
         assertEquals(2, responseObject.comments?.size)
     }
 
@@ -155,7 +155,7 @@ class V1StubTest {
 
         assertEquals(200, response.status.value)
         assertEquals("123", responseObject.requestId)
-        assertEquals("1234", responseObject.compositionInfo?.id)
+        assertEquals("123", responseObject.compositionInfo?.id)
         assertEquals(2, responseObject.comments?.size)
     }
 

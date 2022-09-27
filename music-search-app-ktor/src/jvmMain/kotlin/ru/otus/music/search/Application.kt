@@ -5,38 +5,29 @@ import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.locations.*
-import io.ktor.server.plugins.autohead.*
-import io.ktor.server.plugins.cachingheaders.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.websocket.*
 import org.slf4j.event.Level
 import ru.otus.music.search.api.v1.apiV1Mapper
+import ru.otus.music.search.biz.MsCompositionProcessor
 import ru.otus.music.search.v1.v1Comment
 import ru.otus.music.search.v1.v1Composition
 
-// function with config (application.conf)
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
     install(Routing)
 
-    install(CachingHeaders)
-    install(DefaultHeaders)
-    install(AutoHeadResponse)
-    install(WebSockets)
-
     install(CORS) {
         allowMethod(HttpMethod.Post)
         allowHeader(HttpHeaders.Authorization)
         allowHeader("MyCustomHeader")
         allowCredentials = true
-        anyHost() // TODO remove
+        anyHost()
     }
 
     install(ContentNegotiation) {
@@ -50,15 +41,15 @@ fun Application.module() {
     }
     @Suppress("OPT_IN_USAGE")
     install(Locations)
-
+    val processor = MsCompositionProcessor()
     routing {
         get("/") {
             call.respondText("Hello, world!")
         }
 
         route("v1") {
-            v1Composition()
-            v1Comment()
+            v1Composition(processor)
+            v1Comment(processor)
         }
         static("static") {
             resources("static")

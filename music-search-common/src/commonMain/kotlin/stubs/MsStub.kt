@@ -5,9 +5,8 @@ enum class MsStub {
     SUCCESS,
     NOT_FOUND,
     BAD_ID,
-    BAD_TITLE,
-    BAD_DESCRIPTION,
-    BAD_VISIBILITY,
+    DB_ERROR,
+    BAD_TEXT,
     CANNOT_DELETE,
     BAD_SEARCH_STRING,
 }

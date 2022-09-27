@@ -72,9 +72,8 @@ private fun CompositionDebug?.transportToStubCase(): MsStub = when(this?.stub) {
     CompositionRequestDebugStubs.SUCCESS -> MsStub.SUCCESS
     CompositionRequestDebugStubs.NOT_FOUND -> MsStub.NOT_FOUND
     CompositionRequestDebugStubs.BAD_ID -> MsStub.BAD_ID
-    CompositionRequestDebugStubs.BAD_TITLE -> MsStub.BAD_TITLE
-    CompositionRequestDebugStubs.BAD_DESCRIPTION -> MsStub.BAD_DESCRIPTION
-    CompositionRequestDebugStubs.BAD_VISIBILITY -> MsStub.BAD_VISIBILITY
+    CompositionRequestDebugStubs.DB_ERROR -> MsStub.DB_ERROR
+    CompositionRequestDebugStubs.BAD_TEXT -> MsStub.BAD_TEXT
     CompositionRequestDebugStubs.CANNOT_DELETE -> MsStub.CANNOT_DELETE
     CompositionRequestDebugStubs.BAD_SEARCH_STRING -> MsStub.BAD_SEARCH_STRING
     null -> MsStub.NONE

@@ -24,6 +24,12 @@ data class MsContext(
     var msRequest: MsCompositionDiscussion = MsCompositionDiscussion(),
     var filterRequest: MsFilter = MsFilter(),
 
+    var msValidating: MsCompositionDiscussion = MsCompositionDiscussion(),
+    var filterValidating: MsFilter = MsFilter(),
+
+    var msValidated: MsCompositionDiscussion = MsCompositionDiscussion(),
+    var filterValidated: MsFilter = MsFilter(),
+
     var compositionResponse: MsCompositionDiscussion = MsCompositionDiscussion(),
     var compositionsResponse: MutableList<MsCompositionDiscussion> = mutableListOf(),
 )

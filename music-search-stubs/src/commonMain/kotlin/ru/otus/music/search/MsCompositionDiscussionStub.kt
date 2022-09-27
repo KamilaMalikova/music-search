@@ -25,4 +25,7 @@ object MsCompositionDiscussionStub {
         composition = composition,
         status = status
     )
+
+    fun prepareResult(block: MsCompositionDiscussion.() -> Unit): MsCompositionDiscussion =
+        get().apply(block)
 }
