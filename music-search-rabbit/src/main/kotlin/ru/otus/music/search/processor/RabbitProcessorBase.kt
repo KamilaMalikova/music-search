@@ -65,7 +65,7 @@ abstract class RabbitProcessorBase(
     /**
      * Error handling
      */
-    protected abstract fun Channel.onError(e: Throwable)
+    protected abstract suspend fun Channel.onError(e: Throwable)
 
     /**
      * Consumer cancelling callback
