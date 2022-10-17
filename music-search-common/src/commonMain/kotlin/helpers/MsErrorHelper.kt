@@ -4,7 +4,7 @@ import ru.otus.music.search.common.MsContext
 import ru.otus.music.search.common.models.MsError
 import ru.otus.music.search.common.models.MsState
 
-fun MsContext.addError(error: MsError) = errors.add(error)
+fun MsContext.addError(vararg error: MsError) = errors.addAll(error)
 
 fun MsContext.fail(
     type: String,
