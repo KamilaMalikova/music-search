@@ -1,8 +1,10 @@
 package ru.otus.music.search.biz.validation
 
+import MsRepositoryStub
 import ru.otus.music.search.biz.MsCompositionProcessor
 import ru.otus.music.search.common.models.MsCommand
 import kotlin.test.Test
+import ru.otus.music.search.common.models.MsSettings
 
 class MsAcceptCommentTest {
     @Test
@@ -24,6 +26,11 @@ class MsAcceptCommentTest {
 
     private companion object {
         val command = MsCommand.ACCEPT
-        val processor = MsCompositionProcessor()
+        val settings by lazy {
+            MsSettings(
+                repoTest = MsRepositoryStub()
+            )
+        }
+        val processor by lazy { MsCompositionProcessor(settings) }
     }
 }

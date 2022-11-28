@@ -1,8 +1,18 @@
 package ru.otus.music.search.biz
 
+import ru.otus.music.search.biz.general.prepareResult
 import ru.otus.music.search.biz.groups.operation
 import ru.otus.music.search.biz.groups.stub
 import ru.otus.music.search.biz.groups.validation
+import ru.otus.music.search.biz.repo.repoCreateComment
+import ru.otus.music.search.biz.repo.repoCreateComposition
+import ru.otus.music.search.biz.repo.repoFilter
+import ru.otus.music.search.biz.repo.repoPrepareAccept
+import ru.otus.music.search.biz.repo.repoPrepareComment
+import ru.otus.music.search.biz.repo.repoPrepareDecline
+import ru.otus.music.search.biz.repo.repoReadComposition
+import ru.otus.music.search.biz.repo.repoUpdateComment
+import ru.otus.music.search.biz.repo.repoUpdateComposition
 import ru.otus.music.search.biz.workers.initStatus
 import ru.otus.music.search.biz.workers.stubAcceptSuccess
 import ru.otus.music.search.biz.workers.stubCommentSuccess
@@ -27,16 +37,22 @@ import ru.otus.music.search.biz.workers.validation.validateCompositionIdNotEmpty
 import ru.otus.music.search.biz.workers.validation.validateOwnerIdNotEmpty
 import ru.otus.music.search.common.MsContext
 import ru.otus.music.search.common.models.MsCommand
+import ru.otus.music.search.common.models.MsSettings
+import ru.otus.music.search.common.models.MsState
+import ru.otus.music.search.cor.chain
 import ru.otus.music.search.cor.rootChain
 import ru.otus.music.search.cor.worker
 
-class MsCompositionProcessor {
+class MsCompositionProcessor(
+    val settings: MsSettings = MsSettings()
+) {
     suspend fun exec(ctx: MsContext) =
-        BusinessChain.exec(ctx)
+        BusinessChain.exec(ctx.apply { settings = this@MsCompositionProcessor.settings })
 
     private companion object {
         val BusinessChain = rootChain<MsContext> {
             initStatus("Initialization of status")
+            initRepo("Initialization of repo")
 
             operation("Creation of object", MsCommand.CREATE) {
                 stub("Handling stubs") {
@@ -53,9 +69,16 @@ class MsCompositionProcessor {
 
                     finishValidation("Ending validation")
                 }
+
+                chain {
+                    title = "Saving composition"
+                    repoPrepareCreate("Preparation of object to save")
+                    repoCreateComposition("Inserting composition into db")
+                }
+                prepareResult("Preparation of response")
             }
 
-            operation("Creation of object", MsCommand.READ) {
+            operation("Reading of object", MsCommand.READ) {
                 stub("Handling stubs") {
                     stubReadSuccess("Imitation of successful handling")
                     stubValidationBadId("Imitation of id validation error")
@@ -70,6 +93,17 @@ class MsCompositionProcessor {
 
                     finishValidation("Ending validation")
                 }
+
+                chain {
+                    title = "Reading composition discussion"
+                    repoReadComposition("Reading composition from DB")
+                    worker {
+                        title = "Preparation read response"
+                        on { state == MsState.RUNNING }
+                        handle { msRepoDone = msRepoRead }
+                    }
+                }
+                prepareResult("Preparation of response")
             }
 
             operation("Comment of object", MsCommand.COMMENT) {
@@ -94,6 +128,14 @@ class MsCompositionProcessor {
 
                     finishValidation("Ending validation")
                 }
+
+                chain {
+                    title = "Comment"
+                    repoReadComposition("Reading composition from DB")
+                    repoPrepareComment("Preparing comment")
+                    repoCreateComment("Creating comment")
+                }
+                prepareResult("Preparation of response")
             }
 
             operation("Comment of object", MsCommand.ACCEPT) {
@@ -111,8 +153,16 @@ class MsCompositionProcessor {
                     validateCompositionIdNotEmpty("Validation of composition id not empty")
                     validateCommentIdNotEmpty("Validation of commentId")
                     finishValidation("Ending validation")
-
                 }
+
+                chain {
+                    title = "Accept comment"
+                    repoReadComposition("Reading composition from DB")
+                    repoPrepareAccept("Preparing comment")
+                    repoUpdateComment("Update comment")
+                    repoUpdateComposition("Update composition")
+                }
+                prepareResult("Preparation of response")
             }
 
             operation("Comment of object", MsCommand.DECLINE) {
@@ -131,6 +181,15 @@ class MsCompositionProcessor {
                     validateCommentIdNotEmpty("Validation of commentId")
                     finishValidation("Ending validation")
                 }
+
+                chain {
+                    title = "Accept comment"
+                    repoReadComposition("Reading composition from DB")
+                    repoPrepareDecline("Preparing comment")
+                    repoUpdateComment("Update comment")
+                    repoUpdateComposition("Update composition")
+                }
+                prepareResult("Preparation of response")
             }
 
             operation("Comment of object", MsCommand.SEARCH) {
@@ -145,6 +204,13 @@ class MsCompositionProcessor {
 
                     finishFilterValidation("Ending validation")
                 }
+
+                chain {
+                    title = "Filter"
+                    repoFilter("Filtering in DB")
+                }
+
+                prepareResult("Preparation of response")
             }
         }.build()
     }

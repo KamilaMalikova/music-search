@@ -1,16 +1,14 @@
 package ru.otus.music.search.common
 
 import kotlinx.datetime.Instant
-import ru.otus.music.search.common.models.MsCommand
-import ru.otus.music.search.common.models.MsCompositionDiscussion
-import ru.otus.music.search.common.models.MsFilter
-import ru.otus.music.search.common.models.MsError
-import ru.otus.music.search.common.models.MsRequestId
-import ru.otus.music.search.common.models.MsState
+import ru.otus.music.search.common.models.*
+import ru.otus.music.search.common.repo.ICompositionRepository
 import ru.otus.music.search.common.stubs.MsStub
-import ru.otus.music.search.common.models.MsWorkMode
 
 data class MsContext(
+    var settings: MsSettings = MsSettings(),
+    var repository: ICompositionRepository = ICompositionRepository.NONE,
+
     var command: MsCommand = MsCommand.NONE,
     var state: MsState = MsState.NONE,
     val errors: MutableList<MsError> = mutableListOf(),
@@ -29,6 +27,11 @@ data class MsContext(
 
     var msValidated: MsCompositionDiscussion = MsCompositionDiscussion(),
     var filterValidated: MsFilter = MsFilter(),
+
+    var msRepoRead: MsCompositionDiscussion = MsCompositionDiscussion(),
+    var msRepoPrepare: MsCompositionDiscussion = MsCompositionDiscussion(),
+    var msRepoDone: MsCompositionDiscussion = MsCompositionDiscussion(),
+    var msRepoDones: MutableList<MsCompositionDiscussion> = mutableListOf(),
 
     var compositionResponse: MsCompositionDiscussion = MsCompositionDiscussion(),
     var compositionsResponse: MutableList<MsCompositionDiscussion> = mutableListOf(),

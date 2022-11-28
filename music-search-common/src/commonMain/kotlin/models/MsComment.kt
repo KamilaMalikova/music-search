@@ -5,4 +5,8 @@ data class MsComment(
     var author: MsUserId = MsUserId.NONE,
     var text: String = "",
     var status: MsCommentStatus = MsCommentStatus.NONE
-)
+) {
+    companion object{
+        val NONE = MsComment()
+    }
+}

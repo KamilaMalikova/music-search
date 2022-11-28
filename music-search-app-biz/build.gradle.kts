@@ -18,6 +18,8 @@ kotlin {
                 implementation(project(":music-search-common"))
                 implementation(project(":music-search-stubs"))
                 implementation(project(":music-search-cor"))
+                implementation(project(":music-search-repo-test"))
+                implementation(project(":music-search-repo-stub"))
             }
         }
         @Suppress("UNUSED_VARIABLE")

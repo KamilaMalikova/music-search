@@ -1,0 +1,49 @@
+package ru.otus.music.search.common.repo.test
+
+import kotlin.test.assertEquals
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.Test
+import ru.otus.music.search.common.models.MsCompositionDiscussion
+import ru.otus.music.search.common.models.MsDiscussionStatus
+import ru.otus.music.search.common.models.MsUserId
+import ru.otus.music.search.common.repo.CompositionFilterRequest
+import ru.otus.music.search.common.repo.ICompositionRepository
+
+@OptIn(ExperimentalCoroutinesApi::class)
+abstract class RepoCompositionFilterTest {
+    abstract val repo: ICompositionRepository
+
+    protected open val initializedObjects: List<MsCompositionDiscussion> = initObjects
+
+    @Test
+    fun searchOwner() = runRepoTest {
+        val result = repo.filter(CompositionFilterRequest(ownerId = searchOwnerId))
+        assertEquals(true, result.isSuccess)
+        val expected = listOf(initializedObjects[1], initializedObjects[3]).sortedBy { it.composition.id.asString() }
+        assertEquals(expected, result.data?.sortedBy { it.composition.id.asString() })
+        assertEquals(emptyList(), result.errors)
+    }
+
+    @Test
+    fun searchStatus() = runRepoTest {
+        val result = repo.filter(CompositionFilterRequest(status = status))
+        assertEquals(true, result.isSuccess)
+        val expected = listOf(initializedObjects[2], initializedObjects[4]).sortedBy { it.composition.id.asString() }
+        assertEquals(expected, result.data?.sortedBy { it.composition.id.asString() })
+        assertEquals(emptyList(), result.errors)
+    }
+
+    companion object: BaseInitCompositions("search") {
+
+        val searchOwnerId = MsUserId("owner-124")
+        val status = MsDiscussionStatus.OPEN
+
+        override val initObjects: List<MsCompositionDiscussion> = listOf(
+            createInitCompositionDiscussion("composition-0"),
+            createInitCompositionDiscussion("composition-1", ownerId = searchOwnerId),
+            createInitCompositionDiscussion("composition-2", status = status),
+            createInitCompositionDiscussion("composition-3", ownerId = searchOwnerId),
+            createInitCompositionDiscussion("composition-4", status = status),
+        )
+    }
+}

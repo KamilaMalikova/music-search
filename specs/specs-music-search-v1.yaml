@@ -320,6 +320,8 @@ components:
               $ref: '#/components/schemas/CompositionId'
             comment:
               $ref: '#/components/schemas/BaseComment'
+            lock:
+              $ref: '#/components/schemas/CompositionLock'
 
     CommentAddRequest:
       allOf:
@@ -358,6 +360,8 @@ components:
               $ref: '#/components/schemas/CompositionId'
             comment-id:
               $ref: '#/components/schemas/CommentId'
+            lock:
+              $ref: '#/components/schemas/CompositionLock'
 
     CommentDeclineRequest:
       allOf:

@@ -21,8 +21,8 @@ repositories {
 }
 
 application {
-//    mainClass.set("io.ktor.server.netty.EngineMain")
-    mainClass.set("ru.otus.music.search.ApplicationKt")
+    mainClass.set("io.ktor.server.netty.EngineMain")
+//    mainClass.set("ru.otus.music.search.ApplicationJvmKt")
 }
 
 kotlin {
@@ -37,10 +37,13 @@ kotlin {
                 implementation(project(":music-search-common"))
                 implementation(project(":music-search-stubs"))
                 implementation(project(":music-search-app-biz"))
+                implementation(project(":music-search-repo-test"))
+                implementation(project(":music-search-repo-inmemory"))
 
                 implementation(ktor("content-negotiation")) // io.ktor:ktor-server-content-negotiation
                 implementation(ktor("cors")) // "io.ktor:ktor-cors:$ktorVersion"
                 implementation(ktor("caching-headers"))
+                implementation(ktor("cio"))
 
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")

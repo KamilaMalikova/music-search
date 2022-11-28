@@ -11,6 +11,7 @@ import ru.otus.music.search.api.v1.models.CompositionCreateResponse
 import ru.otus.music.search.api.v1.models.CompositionInfo
 import ru.otus.music.search.api.v1.models.CompositionReadResponse
 import ru.otus.music.search.api.v1.models.CompositionSearchResponse
+import ru.otus.music.search.api.v1.models.DiscussionStatus
 import ru.otus.music.search.api.v1.models.Error
 import ru.otus.music.search.api.v1.models.IResponse
 import ru.otus.music.search.api.v1.models.ResponseResult
@@ -18,11 +19,12 @@ import ru.otus.music.search.common.MsContext
 import ru.otus.music.search.common.models.MsCommand
 import ru.otus.music.search.common.models.MsComment
 import ru.otus.music.search.common.models.MsCommentStatus
-import ru.otus.music.search.common.models.MsComposition
 import ru.otus.music.search.common.models.MsCompositionDiscussion
+import ru.otus.music.search.common.models.MsDiscussionStatus
 import ru.otus.music.search.common.models.MsError
 import ru.otus.music.search.common.models.MsState
 import ru.otus.music.search.mappers.v1.exceptions.UnknownMsCommand
+import ru.otus.music.search.mappers.v1.exceptions.UnknownMsStatus
 
 fun MsContext.toTransport(): IResponse =
     when(command) {
@@ -38,21 +40,29 @@ fun MsContext.toTransport(): IResponse =
 private fun String.takeIfNotBlank() =
     this.takeIf { it.isNotBlank() }
 
-private fun MsComposition.toCompositionInfo() =
+private fun MsCompositionDiscussion.toCompositionInfo() =
     CompositionInfo(
-        id = id.asString().takeIfNotBlank(),
+        id = composition.id.asString().takeIfNotBlank(),
         composition = BaseComposition(
-            file = file,
-            owner = owner.asString()
+            file = composition.file,
+            owner = composition.owner.asString(),
+            status = status.toTransport()
         )
     )
+
+private fun MsDiscussionStatus.toTransport() =
+    when(this) {
+        MsDiscussionStatus.OPEN -> DiscussionStatus.OPEN
+        MsDiscussionStatus.CLOSED -> DiscussionStatus.CLOSED
+        MsDiscussionStatus.NONE -> throw UnknownMsStatus(this.name)
+    }
 
 private fun MsContext.toTransportCreate() =
     CompositionCreateResponse(
         requestId = requestId.asString().takeIfNotBlank(),
         result = if (state == MsState.RUNNING) ResponseResult.SUCCESS else ResponseResult.ERROR, // зачем такое решение
         errors = errors.toTransportErrors(),
-        compositionInfo = compositionResponse.composition.toCompositionInfo()
+        compositionInfo = compositionResponse.toCompositionInfo()
     )
 
 private fun MsCommentStatus.toTransportCommentStatus() =
@@ -84,7 +94,7 @@ private fun MsContext.toTransportRead() =
         requestId = requestId.asString().takeIfNotBlank(),
         result = if (state == MsState.RUNNING) ResponseResult.SUCCESS else ResponseResult.ERROR, // зачем такое решение
         errors = errors.toTransportErrors(),
-        compositionInfo = compositionResponse.composition.toCompositionInfo(),
+        compositionInfo = compositionResponse.toCompositionInfo(),
         comments = compositionResponse.comments.toTransportComments()
     )
 
@@ -101,7 +111,7 @@ private fun MsContext.toTransportAccept() =
         requestId = requestId.asString().takeIfNotBlank(),
         result = if (state == MsState.RUNNING) ResponseResult.SUCCESS else ResponseResult.ERROR, // зачем такое решение
         errors = errors.toTransportErrors(),
-        compositionInfo = compositionResponse.composition.toCompositionInfo(),
+        compositionInfo = compositionResponse.toCompositionInfo(),
         comments = compositionResponse.comments.toTransportComments()
     )
 
@@ -122,7 +132,7 @@ private fun MsContext.toTransportSearch() =
     )
 
 private fun List<MsCompositionDiscussion>.toTransportCompositions() =
-    this.map { it.composition.toCompositionInfo() }
+    this.map { it.toCompositionInfo() }
         .toList()
 
 private fun List<MsError>.toTransportErrors(): List<Error>? =

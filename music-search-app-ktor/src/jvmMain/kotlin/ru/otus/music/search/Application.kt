@@ -13,13 +13,15 @@ import io.ktor.server.routing.*
 import org.slf4j.event.Level
 import ru.otus.music.search.api.v1.apiV1Mapper
 import ru.otus.music.search.biz.MsCompositionProcessor
+import ru.otus.music.search.common.models.MsSettings
+import ru.otus.music.search.common.repo.inmemory.CompositionRepoInMemory
 import ru.otus.music.search.v1.v1Comment
 import ru.otus.music.search.v1.v1Composition
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @Suppress("unused") // Referenced in application.conf
-fun Application.module() {
+fun Application.module(settings: MsSettings? = null) {
     install(Routing)
 
     install(CORS) {
@@ -39,9 +41,16 @@ fun Application.module() {
     install(CallLogging) {
         level = Level.INFO
     }
+
     @Suppress("OPT_IN_USAGE")
     install(Locations)
-    val processor = MsCompositionProcessor()
+
+    val corSettings by lazy {
+        settings ?: MsSettings(
+            repoTest = CompositionRepoInMemory()
+        )
+    }
+    val processor = MsCompositionProcessor(corSettings)
     routing {
         get("/") {
             call.respondText("Hello, world!")
