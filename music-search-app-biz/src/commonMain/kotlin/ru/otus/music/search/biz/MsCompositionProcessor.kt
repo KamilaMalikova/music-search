@@ -183,7 +183,7 @@ class MsCompositionProcessor(
                 }
 
                 chain {
-                    title = "Accept comment"
+                    title = "Decline comment"
                     repoReadComposition("Reading composition from DB")
                     repoPrepareDecline("Preparing comment")
                     repoUpdateComment("Update comment")
