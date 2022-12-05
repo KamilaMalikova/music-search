@@ -55,7 +55,8 @@ abstract class BaseInitCompositions(val op: String) : IInitObjects<MsComposition
             MsComment(
                 id = commentId,
                 author = commentAuthorId,
-                text = "$suf $op stub comment"
+                text = "$suf $op stub comment",
+                lock = lock
             )
         ),
         status = status,

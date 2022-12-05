@@ -6,7 +6,7 @@ import ru.otus.music.search.common.repo.CommentUpdateDbRequest
 import ru.otus.music.search.common.repo.CompositionDiscussionDbRequest
 import ru.otus.music.search.common.repo.CompositionDbResponse
 import ru.otus.music.search.common.repo.CompositionFilterDbResponse
-import ru.otus.music.search.common.repo.CompositionFilterRequest
+import ru.otus.music.search.common.repo.CompositionFilterDbRequest
 import ru.otus.music.search.common.repo.CompositionIdDbRequest
 import ru.otus.music.search.common.repo.ICompositionRepository
 
@@ -19,7 +19,7 @@ class CompositionRepositoryMock(
     private val invokeReadComment: (CommentIdDbRequest) -> CompositionDbResponse = { CompositionDbResponse.MOCK_SUCCESS_EMPTY },
     private val invokeUpdateComment: (CommentUpdateDbRequest) -> CompositionDbResponse = { CompositionDbResponse.MOCK_SUCCESS_EMPTY },
     private val invokeDeleteComment: (CommentIdDbRequest) -> CompositionDbResponse = { CompositionDbResponse.MOCK_SUCCESS_EMPTY },
-    private val invokeFilter: (CompositionFilterRequest) -> CompositionFilterDbResponse = { CompositionFilterDbResponse.MOCK_SUCCESS_FILTER_EMPTY },
+    private val invokeFilter: (CompositionFilterDbRequest) -> CompositionFilterDbResponse = { CompositionFilterDbResponse.MOCK_SUCCESS_FILTER_EMPTY },
 ): ICompositionRepository {
     override suspend fun createComposition(rq: CompositionDiscussionDbRequest): CompositionDbResponse =
         invokeCreateComposition(rq)
@@ -34,9 +34,6 @@ class CompositionRepositoryMock(
     override suspend fun updateComposition(rq: CompositionDiscussionDbRequest): CompositionDbResponse =
         invokeUpdateComposition(rq)
 
-    override suspend fun readComment(rq: CommentIdDbRequest): CompositionDbResponse =
-        invokeReadComment(rq)
-
     override suspend fun createComment(rq: CommentDbRequest): CompositionDbResponse =
         invokeCreateComment(rq)
 
@@ -46,6 +43,6 @@ class CompositionRepositoryMock(
     override suspend fun deleteComment(rq: CommentIdDbRequest): CompositionDbResponse =
         invokeDeleteComment(rq)
 
-    override suspend fun filter(rq: CompositionFilterRequest): CompositionFilterDbResponse =
+    override suspend fun filter(rq: CompositionFilterDbRequest): CompositionFilterDbResponse =
         invokeFilter(rq)
 }

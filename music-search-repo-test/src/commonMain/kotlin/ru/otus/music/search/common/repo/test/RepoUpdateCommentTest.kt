@@ -28,7 +28,8 @@ abstract class RepoUpdateCommentTest {
             comment = MsComment(
                 id = updateSucc.comments.first().id,
                 author = updateSucc.comments.first().author,
-                text = updateSucc.comments.first().text
+                text = updateSucc.comments.first().text,
+                lock = updateSucc.comments.first().lock
             ),
             lock = initObjects.first().lock
         )
@@ -38,7 +39,8 @@ abstract class RepoUpdateCommentTest {
             id = updateSucc.composition.id
         ),
         comment = MsComment(
-            id = updateIdNotFound
+            id = updateIdNotFound,
+            lock = initObjects.first().lock
         ),
         lock = initObjects.first().lock
     )
@@ -51,7 +53,8 @@ abstract class RepoUpdateCommentTest {
             comment = MsComment(
                 id = updateConc.comments.first().id,
                 author = updateConc.comments.first().author,
-                text = updateConc.comments.first().text
+                text = updateConc.comments.first().text,
+                lock = lockBad
             ),
             lock = lockBad
         )
@@ -79,7 +82,7 @@ abstract class RepoUpdateCommentTest {
             CommentUpdateDbRequest(
                 compositionId = reqUpdateNotFound.composition.id,
                 comment = reqUpdateNotFound.comment,
-                lock = reqUpdateNotFound.lock
+                lock = initObjects.first().lock
             )
         )
         assertEquals(false, result.isSuccess)
@@ -94,7 +97,7 @@ abstract class RepoUpdateCommentTest {
             CommentUpdateDbRequest(
                 compositionId = reqUpdateConc.composition.id,
                 comment = reqUpdateConc.comment,
-                lock = reqUpdateConc.lock
+                lock = lockBad
             )
         )
         assertEquals(false, result.isSuccess)

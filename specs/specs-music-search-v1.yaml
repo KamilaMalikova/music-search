@@ -342,6 +342,8 @@ components:
               $ref: '#/components/schemas/CommentId'
             lock:
               $ref: '#/components/schemas/CompositionLock'
+            commentLock:
+              $ref: '#/components/schemas/CompositionLock'
 
     CommentAcceptRequest:
       allOf:
@@ -361,6 +363,8 @@ components:
             comment-id:
               $ref: '#/components/schemas/CommentId'
             lock:
+              $ref: '#/components/schemas/CompositionLock'
+            commentLock:
               $ref: '#/components/schemas/CompositionLock'
 
     CommentDeclineRequest:

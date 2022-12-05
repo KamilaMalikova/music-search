@@ -46,18 +46,21 @@ data class CommentEntity(
     val author: String? = null,
     val text: String? = null,
     val status: String? = null,
+    val lock: String? = null
 ) {
     constructor(model: MsComment): this(
         id = model.id.asString().takeIf { it.isNotBlank() },
         author = model.author.asString().takeIf { it.isNotBlank() },
         text = model.text.takeIf { it.isNotBlank() },
-        status = model.status.name
+        status = model.status.name,
+        lock = model.lock.asString()
     )
 
     fun toInternal(): MsComment = MsComment(
         id = id?.let { MsCommentId(it) } ?: MsCommentId.NONE,
         author = author?.let { MsUserId(it) } ?: MsUserId.NONE,
         text = text ?: "",
-        status = status?.let { MsCommentStatus.valueOf(it) } ?: MsCommentStatus.NONE
+        status = status?.let { MsCommentStatus.valueOf(it) } ?: MsCommentStatus.NONE,
+        lock = lock?.let { MsCompositionLock(it) } ?: MsCompositionLock.NONE
     )
 }

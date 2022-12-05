@@ -5,7 +5,7 @@ import ru.otus.music.search.common.models.MsDiscussionStatus
 import ru.otus.music.search.common.models.MsError
 import ru.otus.music.search.common.models.MsState
 import ru.otus.music.search.common.repo.CompositionFilterDbResponse
-import ru.otus.music.search.common.repo.CompositionFilterRequest
+import ru.otus.music.search.common.repo.CompositionFilterDbRequest
 import ru.otus.music.search.cor.ICorChainDsl
 import ru.otus.music.search.cor.worker
 
@@ -15,7 +15,7 @@ fun ICorChainDsl<MsContext>.repoFilter(title: String) = worker {
     on { state == MsState.RUNNING }
     handle {
         val msRequest = msRepoPrepare
-        val filter = CompositionFilterRequest(
+        val filter = CompositionFilterDbRequest(
             ownerId = msRequest.composition.owner,
             status = when (msRequest.status) {
                 MsDiscussionStatus.OPEN -> MsDiscussionStatus.OPEN

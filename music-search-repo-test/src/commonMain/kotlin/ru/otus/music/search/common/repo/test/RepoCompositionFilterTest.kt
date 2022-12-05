@@ -6,7 +6,7 @@ import org.junit.Test
 import ru.otus.music.search.common.models.MsCompositionDiscussion
 import ru.otus.music.search.common.models.MsDiscussionStatus
 import ru.otus.music.search.common.models.MsUserId
-import ru.otus.music.search.common.repo.CompositionFilterRequest
+import ru.otus.music.search.common.repo.CompositionFilterDbRequest
 import ru.otus.music.search.common.repo.ICompositionRepository
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -17,7 +17,7 @@ abstract class RepoCompositionFilterTest {
 
     @Test
     fun searchOwner() = runRepoTest {
-        val result = repo.filter(CompositionFilterRequest(ownerId = searchOwnerId))
+        val result = repo.filter(CompositionFilterDbRequest(ownerId = searchOwnerId))
         assertEquals(true, result.isSuccess)
         val expected = listOf(initializedObjects[1], initializedObjects[3]).sortedBy { it.composition.id.asString() }
         assertEquals(expected, result.data?.sortedBy { it.composition.id.asString() })
@@ -26,7 +26,7 @@ abstract class RepoCompositionFilterTest {
 
     @Test
     fun searchStatus() = runRepoTest {
-        val result = repo.filter(CompositionFilterRequest(status = status))
+        val result = repo.filter(CompositionFilterDbRequest(status = status))
         assertEquals(true, result.isSuccess)
         val expected = listOf(initializedObjects[2], initializedObjects[4]).sortedBy { it.composition.id.asString() }
         assertEquals(expected, result.data?.sortedBy { it.composition.id.asString() })

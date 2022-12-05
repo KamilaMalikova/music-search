@@ -7,7 +7,7 @@ import ru.otus.music.search.common.repo.CommentUpdateDbRequest
 import ru.otus.music.search.common.repo.CompositionDbResponse
 import ru.otus.music.search.common.repo.CompositionDiscussionDbRequest
 import ru.otus.music.search.common.repo.CompositionFilterDbResponse
-import ru.otus.music.search.common.repo.CompositionFilterRequest
+import ru.otus.music.search.common.repo.CompositionFilterDbRequest
 import ru.otus.music.search.common.repo.CompositionIdDbRequest
 import ru.otus.music.search.common.repo.ICompositionRepository
 
@@ -36,12 +36,6 @@ class MsRepositoryStub(): ICompositionRepository {
             isSuccess = true
         )
 
-    override suspend fun readComment(rq: CommentIdDbRequest): CompositionDbResponse =
-        CompositionDbResponse(
-            data = MsCompositionDiscussionStub.prepareResult {  },
-            isSuccess = true
-        )
-
     override suspend fun createComment(rq: CommentDbRequest): CompositionDbResponse =
         CompositionDbResponse(
             data = MsCompositionDiscussionStub.prepareResult {  },
@@ -60,7 +54,7 @@ class MsRepositoryStub(): ICompositionRepository {
             isSuccess = true
         )
 
-    override suspend fun filter(rq: CompositionFilterRequest): CompositionFilterDbResponse =
+    override suspend fun filter(rq: CompositionFilterDbRequest): CompositionFilterDbResponse =
         CompositionFilterDbResponse(
             data = MsCompositionDiscussionStub.prepareSearchList(
                 status = MsDiscussionStatus.OPEN,

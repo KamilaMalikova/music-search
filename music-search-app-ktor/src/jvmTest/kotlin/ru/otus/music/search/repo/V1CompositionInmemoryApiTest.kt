@@ -63,13 +63,15 @@ class V1CompositionInmemoryApiTest {
         )
         comment = MsComment(
             author = MsUserId("user 123"),
-            text = "Comment"
+            text = "Comment",
+            lock = MsCompositionLock(uuidOld)
         )
         comments = mutableSetOf(
             MsComment(
                 id = MsCommentId(uuidSup),
                 author = MsUserId("user1"),
-                text = "comment 1"
+                text = "comment 1",
+                lock = MsCompositionLock(uuidOld)
             )
         )
         lock = MsCompositionLock(uuidOld)
@@ -198,7 +200,8 @@ class V1CompositionInmemoryApiTest {
         val commentAcceptObject = CommentAcceptObject(
             compositionId = uuidOld,
             commentId = uuidSup,
-            lock = uuidOld
+            lock = uuidOld,
+            commentLock = uuidOld
         )
 
         val response = client.post("v1/composition/comment/accept") {
@@ -237,7 +240,8 @@ class V1CompositionInmemoryApiTest {
         val commentDeclineObject = CommentDeclineObject(
             compositionId = uuidOld,
             commentId = uuidSup,
-            lock = uuidOld
+            lock = uuidOld,
+            commentLock = uuidOld
         )
 
         val response = client.post("v1/composition/comment/decline") {

@@ -26,10 +26,10 @@ data class CommentDbRequest(
 data class CommentUpdateDbRequest(
     val compositionId: MsCompositionId,
     val comment: MsComment,
-    val lock: MsCompositionLock = MsCompositionLock.NONE
+    val lock: MsCompositionLock
 )
 
-data class CompositionFilterRequest(
+data class CompositionFilterDbRequest(
     val ownerId: MsUserId = MsUserId.NONE,
     val status: MsDiscussionStatus = MsDiscussionStatus.NONE
 )

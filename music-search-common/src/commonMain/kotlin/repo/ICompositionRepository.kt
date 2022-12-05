@@ -9,15 +9,13 @@ interface ICompositionRepository {
 
     suspend fun updateComposition(rq: CompositionDiscussionDbRequest): CompositionDbResponse
 
-    suspend fun readComment(rq: CommentIdDbRequest): CompositionDbResponse
-
     suspend fun createComment(rq: CommentDbRequest): CompositionDbResponse
 
     suspend fun updateComment(rq: CommentUpdateDbRequest): CompositionDbResponse
 
     suspend fun deleteComment(rq: CommentIdDbRequest): CompositionDbResponse
 
-    suspend fun filter(rq: CompositionFilterRequest): CompositionFilterDbResponse
+    suspend fun filter(rq: CompositionFilterDbRequest): CompositionFilterDbResponse
 
     companion object {
         val NONE = object : ICompositionRepository {
@@ -37,10 +35,6 @@ interface ICompositionRepository {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun readComment(rq: CommentIdDbRequest): CompositionDbResponse {
-                TODO("Not yet implemented")
-            }
-
             override suspend fun createComment(rq: CommentDbRequest): CompositionDbResponse {
                 TODO("Not yet implemented")
             }
@@ -53,7 +47,7 @@ interface ICompositionRepository {
                 TODO("Not yet implemented")
             }
 
-            override suspend fun filter(rq: CompositionFilterRequest): CompositionFilterDbResponse {
+            override suspend fun filter(rq: CompositionFilterDbRequest): CompositionFilterDbResponse {
                 TODO("Not yet implemented")
             }
 

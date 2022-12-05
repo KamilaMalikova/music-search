@@ -143,11 +143,10 @@ fun MsContext.fromTransport(request: CommentAddRequest) {
     stubCase = request.debug.transportToStubCase()
 }
 
-// Should be used lock and what it is used for?
 private fun CommentAcceptObject.toInternal() =
     MsCompositionDiscussion(
         composition = MsComposition(id = compositionId.toCompositionId()),
-        comment = MsComment(id = commentId.toCommentId()),
+        comment = MsComment(id = commentId.toCommentId(), lock = commentLock.toLock()),
         lock = lock.toLock()
     )
 
@@ -162,7 +161,7 @@ fun MsContext.fromTransport(request: CommentAcceptRequest) {
 private fun CommentDeclineObject.toInternal() =
     MsCompositionDiscussion(
         composition = MsComposition(id = compositionId.toCompositionId()),
-        comment = MsComment(id = commentId.toCommentId()),
+        comment = MsComment(id = commentId.toCommentId(), lock = commentLock.toLock()),
         lock = lock.toLock()
     )
 

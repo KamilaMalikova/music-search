@@ -20,7 +20,7 @@ import ru.otus.music.search.common.repo.CommentUpdateDbRequest
 import ru.otus.music.search.common.repo.CompositionDiscussionDbRequest
 import ru.otus.music.search.common.repo.CompositionDbResponse
 import ru.otus.music.search.common.repo.CompositionFilterDbResponse
-import ru.otus.music.search.common.repo.CompositionFilterRequest
+import ru.otus.music.search.common.repo.CompositionFilterDbRequest
 import ru.otus.music.search.common.repo.CompositionIdDbRequest
 import ru.otus.music.search.common.repo.ICompositionRepository
 import ru.otus.music.search.common.repo.inmemory.model.CompositionEntity
@@ -133,19 +133,6 @@ class CompositionRepoInMemory(
         }
     }
 
-    override suspend fun readComment(rq: CommentIdDbRequest): CompositionDbResponse {
-        val key = rq.compositionId.takeIfNotNone() ?: return resultErrorEmptyId
-        val commentKey = rq.commentId.takeIfNotNone() ?: return resultErrorEmptyCommentId
-        return cache.get(key)
-            ?.let {
-                val comment = it.comments[commentKey] ?: return resultErrorCommentNotFound
-                CompositionDbResponse(
-                    data = it.toInternal().copy(comment = comment.toInternal()),
-                    isSuccess = true
-                )
-            } ?: resultErrorNotFound
-    }
-
     override suspend fun createComment(rq: CommentDbRequest): CompositionDbResponse {
         val key = rq.compositionId.takeIfNotNone() ?: return resultErrorEmptyId
         val commentId = MsCommentId(randomUuid())
@@ -185,18 +172,19 @@ class CompositionRepoInMemory(
     override suspend fun updateComment(rq: CommentUpdateDbRequest): CompositionDbResponse {
         val key = rq.compositionId.takeIfNotNone() ?: return resultErrorEmptyId
         val commentId = rq.comment.id.takeIf { it != MsCommentId.NONE } ?: return resultErrorEmptyCommentId
-        val oldLock = rq.lock.takeIfNotNone() ?: return resultErrorEmptyLock
-
+        val oldCommentLock = rq.comment.lock.takeIfNotNone() ?: return resultErrorEmptyLock
+        val discussionLock = rq.lock.asString()
+        val newComment = rq.comment.copy(lock = MsCompositionLock(randomUuid()))
         return mutex.withLock {
             val oldDiscussion = cache.get(key)
             when {
                 oldDiscussion == null -> resultErrorNotFound
-                oldDiscussion.lock != oldLock -> CompositionDbResponse(
+                oldDiscussion.lock != discussionLock -> CompositionDbResponse(
                     data = oldDiscussion.toInternal(),
                     isSuccess = false,
                     errors = listOf(
                         errorRepoConcurrency(
-                            MsCompositionLock(oldLock),
+                            MsCompositionLock(discussionLock),
                             oldDiscussion.lock?.let { MsCompositionLock(it) }
                         )
                     )
@@ -208,7 +196,7 @@ class CompositionRepoInMemory(
                                 ?.also {
                                     comments.remove(it)
                                 } ?: return resultErrorCommentNotFound
-                            comments.add(rq.comment)
+                            comments.add(newComment)
                         }
                     val entity = CompositionEntity(newDiscussion)
                     cache.put(key, entity)
@@ -259,7 +247,7 @@ class CompositionRepoInMemory(
         }
     }
 
-    override suspend fun filter(rq: CompositionFilterRequest): CompositionFilterDbResponse {
+    override suspend fun filter(rq: CompositionFilterDbRequest): CompositionFilterDbResponse {
         val result = cache.asMap().asSequence()
             .filter { entry ->
                 rq.ownerId.takeIf { it != MsUserId.NONE }?.let {
