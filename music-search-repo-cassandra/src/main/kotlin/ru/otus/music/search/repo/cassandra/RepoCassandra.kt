@@ -15,6 +15,7 @@ import ru.otus.music.search.common.models.MsError
 import ru.otus.music.search.common.repo.CommentDbRequest
 import ru.otus.music.search.common.repo.CommentIdDbRequest
 import ru.otus.music.search.common.repo.CommentUpdateDbRequest
+import ru.otus.music.search.common.repo.CommentsFilterDbRequest
 import ru.otus.music.search.common.repo.CommetnsFilterDbResponse
 import ru.otus.music.search.common.repo.CompositionDbResponse
 import ru.otus.music.search.common.repo.CompositionDiscussionDbRequest
@@ -27,7 +28,7 @@ import ru.otus.music.search.repo.cassandra.model.DiscussionCassandraDto
 
 class RepoCassandra(
     private val compositionDao: CompositionCassandraDao,
-    private val commentDao: CommentCassandraDao,
+    private val commentDao: CommentsCassandraDao,
     private val timeoutMillis: Long = 300_000,
     private val randomUuid: () -> String = { uuid4().toString() }
 ): ICompositionRepository {
@@ -157,9 +158,10 @@ class RepoCassandra(
             ::errorToResponse
         )
 
-    private suspend fun searchComments(compositionId: MsCompositionId): CommetnsFilterDbResponse = doDbAction(
+    private suspend fun searchComments(compositionId: MsCompositionId): CommetnsFilterDbResponse =
+        doDbAction(
         "search-comments",
-        { commentDao.search(compositionId.asString()) },
+        { commentDao.search(CommentsFilterDbRequest(compositionId)) },
         { found -> CommetnsFilterDbResponse.success(found.map { it.toModel() }) },
         ::errorToCommentFilterResponse
     )

@@ -19,8 +19,8 @@ abstract class RepoCompositionFilterTest {
     fun searchOwner() = runRepoTest {
         val result = repo.filter(CompositionFilterDbRequest(ownerId = searchOwnerId))
         assertEquals(true, result.isSuccess)
-        val expected = listOf(initializedObjects[1], initializedObjects[3]).sortedBy { it.composition.id.asString() }
-        assertEquals(expected, result.data?.sortedBy { it.composition.id.asString() })
+        val expected = listOf(initializedObjects[1].copy(comments = mutableSetOf()), initializedObjects[3].copy(comments = mutableSetOf())).sortedBy { it.composition.id.asString() }
+        assertEquals(expected, result.data?.map { it.copy(comments = mutableSetOf()) }?.toSet()?.sortedBy { it.composition.id.asString() })
         assertEquals(emptyList(), result.errors)
     }
 
@@ -28,8 +28,8 @@ abstract class RepoCompositionFilterTest {
     fun searchStatus() = runRepoTest {
         val result = repo.filter(CompositionFilterDbRequest(status = status))
         assertEquals(true, result.isSuccess)
-        val expected = listOf(initializedObjects[2], initializedObjects[4]).sortedBy { it.composition.id.asString() }
-        assertEquals(expected, result.data?.sortedBy { it.composition.id.asString() })
+        val expected = listOf(initializedObjects[2].copy(comments = mutableSetOf()), initializedObjects[4].copy(comments = mutableSetOf())).sortedBy { it.composition.id.asString() }
+        assertEquals(expected, result.data?.map { it.copy(comments = mutableSetOf()) }?.toSet()?.sortedBy { it.composition.id.asString() })
         assertEquals(emptyList(), result.errors)
     }
 

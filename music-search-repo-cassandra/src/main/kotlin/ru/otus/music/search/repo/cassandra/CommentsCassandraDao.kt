@@ -7,12 +7,10 @@ import com.datastax.oss.driver.api.mapper.annotations.QueryProvider
 import com.datastax.oss.driver.api.mapper.annotations.Select
 import com.datastax.oss.driver.api.mapper.annotations.Update
 import java.util.concurrent.CompletionStage
-import ru.otus.music.search.common.models.MsCompositionId
+import ru.otus.music.search.common.repo.CommentsFilterDbRequest
 import ru.otus.music.search.repo.cassandra.model.CommentCassandraDto
-import ru.otus.music.search.repo.cassandra.model.DiscussionCassandraDto
-
 @Dao
-interface CommentCassandraDao {
+interface CommentsCassandraDao {
     @Insert
     fun create(dto: CommentCassandraDto): CompletionStage<Unit>
 
@@ -25,6 +23,7 @@ interface CommentCassandraDao {
     @Delete(customWhereClause = "id = :id", customIfClause = "lock =:prevLock", entityClass = [CommentCassandraDto::class])
     fun delete(compositionId: String, id: String, prevLock: String): CompletionStage<Boolean>
 
-    @Select(customWhereClause = "composition_id = :compositionId")
-    fun search(compositionId: String): CompletionStage<Collection<CommentCassandraDto>>
+    //    @Select(customWhereClause = "composition_id = :compositionId")
+    @QueryProvider(providerClass = CommentSearchCassandraProvider::class, entityHelpers = [CommentCassandraDto::class])
+    fun search(filter: CommentsFilterDbRequest): CompletionStage<Collection<CommentCassandraDto>>
 }

@@ -33,3 +33,7 @@ data class CompositionFilterDbRequest(
     val ownerId: MsUserId = MsUserId.NONE,
     val status: MsDiscussionStatus = MsDiscussionStatus.NONE
 )
+
+data class CommentsFilterDbRequest(
+    val compositionId: MsCompositionId = MsCompositionId.NONE
+)

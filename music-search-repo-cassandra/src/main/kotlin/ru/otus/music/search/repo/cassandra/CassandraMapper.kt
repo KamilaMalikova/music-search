@@ -11,7 +11,7 @@ interface CassandraMapper {
     @DaoFactory
     fun compositionDao(@DaoKeyspace keyspace: String, @DaoTable tableName: String): CompositionCassandraDao
     @DaoFactory
-    fun commentDao(@DaoKeyspace keyspace: String, @DaoTable tableName: String): CommentCassandraDao
+    fun commentDao(@DaoKeyspace keyspace: String, @DaoTable tableName: String): CommentsCassandraDao
 
     companion object {
         fun builder(session: CqlSession) = CassandraMapperBuilder(session)
