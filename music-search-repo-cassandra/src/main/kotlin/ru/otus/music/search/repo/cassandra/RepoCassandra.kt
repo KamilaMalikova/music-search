@@ -1,13 +1,11 @@
 package ru.otus.music.search.repo.cassandra
 
 import com.benasher44.uuid.uuid4
-import java.util.Collections
 import java.util.concurrent.CompletionStage
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.withTimeout
 import org.slf4j.LoggerFactory
 import ru.otus.music.search.common.helpers.asMsError
-import ru.otus.music.search.common.models.MsComment
 import ru.otus.music.search.common.models.MsCommentId
 import ru.otus.music.search.common.models.MsComposition
 import ru.otus.music.search.common.models.MsCompositionDiscussion
@@ -17,6 +15,7 @@ import ru.otus.music.search.common.models.MsError
 import ru.otus.music.search.common.repo.CommentDbRequest
 import ru.otus.music.search.common.repo.CommentIdDbRequest
 import ru.otus.music.search.common.repo.CommentUpdateDbRequest
+import ru.otus.music.search.common.repo.CommetnsFilterDbResponse
 import ru.otus.music.search.common.repo.CompositionDbResponse
 import ru.otus.music.search.common.repo.CompositionDiscussionDbRequest
 import ru.otus.music.search.common.repo.CompositionFilterDbRequest
@@ -36,6 +35,7 @@ class RepoCassandra(
 
     private fun errorToResponse(e: Exception) = CompositionDbResponse.error(e.asMsError())
     private fun errorToFilterResponse(e: Exception) = CompositionFilterDbResponse.error(e.asMsError())
+    private fun errorToCommentFilterResponse(e: Exception) = CommetnsFilterDbResponse.error(e.asMsError())
 
     private suspend inline fun readAndDoDbAction(
         name: String,
@@ -124,7 +124,7 @@ class RepoCassandra(
         }
 
     override suspend fun createComposition(rq: CompositionDiscussionDbRequest): CompositionDbResponse {
-        val newComposition= rq.discussion.composition.copy(id = MsCompositionId(randomUuid()))
+        val newComposition = rq.discussion.composition.copy(id = MsCompositionId(randomUuid()))
         val new = rq.discussion.copy(composition = newComposition, lock = MsCompositionLock(randomUuid()))
 
         return doDbAction(
@@ -143,16 +143,26 @@ class RepoCassandra(
             { compositionDao.read(rq.id.asString()) },
             { found ->
                 if (found != null) {
-                    val comments = commentDao.search(rq.id.asString())
-                        .await()
-                        .map { it.toModel() }
-                        .toMutableSet()
-                    CompositionDbResponse.success(found.toModel().copy(comments = comments))
+                    val comments = searchComments(rq.id)
+
+                    if (comments.isSuccess) {
+                        CompositionDbResponse.success(found.toModel().copy(comments = comments.data?.toMutableSet() ?: mutableSetOf()))
+                    } else {
+                        CompositionDbResponse.error(comments.errors)
+                    }
+
                 }
                 else ID_NOT_FOUND
             },
             ::errorToResponse
         )
+
+    private suspend fun searchComments(compositionId: MsCompositionId): CommetnsFilterDbResponse = doDbAction(
+        "search-comments",
+        { commentDao.search(compositionId.asString()) },
+        { found -> CommetnsFilterDbResponse.success(found.map { it.toModel() }) },
+        ::errorToCommentFilterResponse
+    )
 
     override suspend fun deleteComposition(rq: CompositionIdDbRequest): CompositionDbResponse =
         readAndDoDbAction(
@@ -160,7 +170,7 @@ class RepoCassandra(
             rq.id,
             null,
             {
-                commentDao.delete(rq.id.asString(), rq.lock.asString())
+//                commentDao.deleteAll(rq.id.asString(), rq.lock.asString())
                 compositionDao.delete(rq.id.asString(), rq.lock.asString())
             },
             ::errorToResponse
@@ -230,9 +240,15 @@ class RepoCassandra(
             ::errorToResponse
         )
 
-    override suspend fun filter(rq: CompositionFilterDbRequest): CompositionFilterDbResponse {
-        TODO("Not yet implemented")
-    }
+    override suspend fun filter(rq: CompositionFilterDbRequest): CompositionFilterDbResponse =
+        doDbAction(
+            "search",
+            { compositionDao.search(rq) },
+            { found ->
+                CompositionFilterDbResponse.success(found.map { it.toModel() })
+            },
+            ::errorToFilterResponse
+        )
 
     companion object {
         private val ID_IS_EMPTY = CompositionDbResponse.error(MsError(field = "id", message = "Id is empty"))

@@ -73,6 +73,7 @@ object TestCompanion {
         )
         session.execute(DiscussionCassandraDto.table(keyspace, DiscussionCassandraDto.TABLE_NAME))
         session.execute(CommentCassandraDto.table(keyspace, CommentCassandraDto.TABLE_NAME))
+        session.execute(CommentCassandraDto.commentIndex(keyspace, CommentCassandraDto.TABLE_NAME))
     }
 
     fun repository(initObjects: List<MsCompositionDiscussion>, keyspace: String, lock: MsCompositionLock): RepoCassandra {

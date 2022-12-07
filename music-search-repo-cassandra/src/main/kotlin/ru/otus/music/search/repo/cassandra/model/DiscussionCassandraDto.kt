@@ -33,6 +33,7 @@ data class DiscussionCassandraDto(
         owner = discussion.composition.owner.takeIf { it != MsUserId.NONE }?.asString(),
         fileName = discussion.composition.file.absolutePath,
         status = discussion.status.toTransport(),
+        lock = discussion.lock.takeIf { it != MsCompositionLock.NONE }?.asString()
     )
 
     fun toModel() = MsCompositionDiscussion(

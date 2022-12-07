@@ -14,10 +14,10 @@ import ru.otus.music.search.common.models.MsUserId
 @Entity
 data class CommentCassandraDto(
     @field:CqlName(COLUMN_COMPOSITION_ID)
-    @field:PartitionKey(1)
+//    @field:PartitionKey(0)
     val discussionId: String? = null,
     @field:CqlName(COLUMN_ID)
-    @field:PartitionKey(2)
+    @field:PartitionKey(0)
     val id: String? = null,
     @field:CqlName(COLUMN_AUTHOR)
     val author: String? = null,
@@ -52,17 +52,26 @@ data class CommentCassandraDto(
         const val COLUMN_TEXT = "text"
         const val COLUMN_STATUS = "status"
         const val COLUMN_LOCK = "lock"
-
         fun table(keyspace: String, tableName: String) =
             SchemaBuilder
                 .createTable(keyspace, tableName)
                 .ifNotExists()
-                .withPartitionKey(COLUMN_COMPOSITION_ID, DataTypes.TEXT)
                 .withPartitionKey(COLUMN_ID, DataTypes.TEXT)
+                .withColumn(COLUMN_COMPOSITION_ID, DataTypes.TEXT)
                 .withColumn(COLUMN_AUTHOR, DataTypes.TEXT)
                 .withColumn(COLUMN_TEXT, DataTypes.TEXT)
                 .withColumn(COLUMN_STATUS, DataTypes.TEXT)
                 .withColumn(COLUMN_LOCK, DataTypes.TEXT)
+                .build()
+
+        fun commentIndex(keyspace: String, tableName: String, locale: String = "en") =
+            SchemaBuilder
+                .createIndex()
+                .ifNotExists()
+                .usingSASI()
+                .onTable(keyspace, tableName)
+                .andColumn(COLUMN_COMPOSITION_ID)
+                .withSASIOptions(mapOf("mode" to "CONTAINS", "tokenization_locale" to locale))
                 .build()
     }
 }

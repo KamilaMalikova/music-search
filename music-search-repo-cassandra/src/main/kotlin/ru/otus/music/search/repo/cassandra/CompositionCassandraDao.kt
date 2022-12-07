@@ -18,7 +18,7 @@ interface CompositionCassandraDao {
     @Select
     fun read(dto: String): CompletionStage<DiscussionCassandraDto?>
 
-    @Update
+    @Update(customIfClause = "lock = :prevLock")
     fun update(dto: DiscussionCassandraDto, prevLock: String): CompletionStage<Boolean>
 
     @Delete(customWhereClause = "id = :id", customIfClause = "lock =:prevLock", entityClass = [DiscussionCassandraDto::class])

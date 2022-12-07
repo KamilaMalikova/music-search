@@ -8,7 +8,6 @@ import com.datastax.oss.driver.api.mapper.annotations.Select
 import com.datastax.oss.driver.api.mapper.annotations.Update
 import java.util.concurrent.CompletionStage
 import ru.otus.music.search.common.models.MsCompositionId
-import ru.otus.music.search.common.repo.CompositionFilterDbRequest
 import ru.otus.music.search.repo.cassandra.model.CommentCassandraDto
 import ru.otus.music.search.repo.cassandra.model.DiscussionCassandraDto
 
@@ -17,16 +16,13 @@ interface CommentCassandraDao {
     @Insert
     fun create(dto: CommentCassandraDto): CompletionStage<Unit>
 
-    @Select(customWhereClause = "composition_id = :compositionId and id = :id")
+    @Select(customWhereClause = "id = :id")
     fun read(compositionId: String, id: String): CompletionStage<CommentCassandraDto?>
 
-    @Update
+    @Update(customIfClause = "lock = :prevLock")
     fun update(dto: CommentCassandraDto, prevLock: String): CompletionStage<Boolean>
 
-    @Delete(customWhereClause = "composition_id = :compositionId", customIfClause = "lock =:prevLock", entityClass = [CommentCassandraDto::class])
-    fun delete(compositionId: String, prevLock: String): CompletionStage<Boolean>
-
-    @Delete(customWhereClause = "composition_id = :compositionId and id = :id", customIfClause = "lock =:prevLock", entityClass = [CommentCassandraDto::class])
+    @Delete(customWhereClause = "id = :id", customIfClause = "lock =:prevLock", entityClass = [CommentCassandraDto::class])
     fun delete(compositionId: String, id: String, prevLock: String): CompletionStage<Boolean>
 
     @Select(customWhereClause = "composition_id = :compositionId")

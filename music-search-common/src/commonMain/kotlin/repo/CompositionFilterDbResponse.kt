@@ -12,8 +12,8 @@ data class CompositionFilterDbResponse(
 
     companion object {
         val MOCK_SUCCESS_FILTER_EMPTY = CompositionFilterDbResponse(null, true)
-        fun success(result: MsCompositionDiscussion) = CompositionDbResponse(result, true)
-        fun error(errors: List<MsError>) = CompositionDbResponse(null, false, errors)
-        fun error(error: MsError) = CompositionDbResponse(null, false, listOf(error))
+        fun success(result: List<MsCompositionDiscussion>) = CompositionFilterDbResponse(result, true)
+        fun error(errors: List<MsError>) = CompositionFilterDbResponse(null, false, errors)
+        fun error(error: MsError) = CompositionFilterDbResponse(null, false, listOf(error))
     }
 }
