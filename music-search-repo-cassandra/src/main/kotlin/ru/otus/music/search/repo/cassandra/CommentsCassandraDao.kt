@@ -23,7 +23,6 @@ interface CommentsCassandraDao {
     @Delete(customWhereClause = "id = :id", customIfClause = "lock =:prevLock", entityClass = [CommentCassandraDto::class])
     fun delete(compositionId: String, id: String, prevLock: String): CompletionStage<Boolean>
 
-    //    @Select(customWhereClause = "composition_id = :compositionId")
     @QueryProvider(providerClass = CommentSearchCassandraProvider::class, entityHelpers = [CommentCassandraDto::class])
     fun search(filter: CommentsFilterDbRequest): CompletionStage<Collection<CommentCassandraDto>>
 }
