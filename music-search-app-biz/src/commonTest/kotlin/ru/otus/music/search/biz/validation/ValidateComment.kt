@@ -2,6 +2,7 @@ package ru.otus.music.search.biz.validation
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import ru.otus.music.search.MsCompositionDiscussionStub
 import ru.otus.music.search.biz.MsCompositionProcessor
 import ru.otus.music.search.common.EMPTY_FILE
 import ru.otus.music.search.common.MsContext
@@ -14,6 +15,8 @@ import ru.otus.music.search.common.models.MsCompositionId
 import ru.otus.music.search.common.models.MsState
 import ru.otus.music.search.common.models.MsUserId
 import ru.otus.music.search.common.models.MsWorkMode
+import ru.otus.music.search.common.permissions.MsPrincipalModel
+import ru.otus.music.search.common.permissions.MsUserGroups
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -33,6 +36,13 @@ fun validateCorrectComment(command: MsCommand, processor: MsCompositionProcessor
             comment = MsComment(
                 author = MsUserId("1234"),
                 text = "Bang bang"
+            )
+        ),
+        principal = MsPrincipalModel(
+            id = MsUserId("12345"),
+            groups = setOf(
+                MsUserGroups.USER,
+                MsUserGroups.TEST,
             )
         )
     )
@@ -57,6 +67,13 @@ fun validateTrimComment(command: MsCommand, processor: MsCompositionProcessor) =
             comment = MsComment(
                 author = MsUserId("12345"),
                 text = "\n\tBang bang"
+            )
+        ),
+        principal = MsPrincipalModel(
+            id = MsUserId("12345"),
+            groups = setOf(
+                MsUserGroups.USER,
+                MsUserGroups.TEST,
             )
         )
     )
@@ -125,23 +142,31 @@ fun validateIncorrectNoContentInComment(command: MsCommand, processor: MsComposi
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun validateCorrectCommentIdNotEmpty(command: MsCommand, processor: MsCompositionProcessor) = runTest {
+    val stub = MsCompositionDiscussionStub.get()
     val ctx = MsContext(
         command = command,
         state = MsState.NONE,
         workMode = MsWorkMode.TEST,
         msRequest = MsCompositionDiscussion(
             composition = MsComposition(
-                id = MsCompositionId("12345")
+                id = stub.composition.id
             ),
             comment = MsComment(
-                id = MsCommentId("12345")
+                id = stub.comments.firstOrNull()?.id ?: MsCommentId.NONE
+            )
+        ),
+        principal = MsPrincipalModel(
+            id = stub.composition.owner,
+            groups = setOf(
+                MsUserGroups.USER,
+                MsUserGroups.TEST,
             )
         )
     )
 
     processor.exec(ctx)
     assertNotEquals(MsState.FAILING, ctx.state)
-    assertEquals(MsCommentId("12345"), ctx.msValidated.comment.id)
+    assertEquals(stub.comments.firstOrNull()?.id, ctx.msValidated.comment.id)
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)

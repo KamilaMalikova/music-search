@@ -1,11 +1,14 @@
 package ru.otus.music.search.v1
 
 import io.ktor.server.application.*
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import kotlinx.datetime.Clock
 import ru.otus.music.search.api.v1.models.IRequest
 import ru.otus.music.search.api.v1.models.IResponse
+import ru.otus.music.search.base.toModel
 import ru.otus.music.search.biz.MsCompositionProcessor
 import ru.otus.music.search.common.MsContext
 import ru.otus.music.search.common.helpers.asMsError
@@ -22,6 +25,7 @@ suspend inline fun <reified Q : IRequest, @Suppress("unused") reified R : IRespo
         timeStart = Clock.System.now(),
     )
     try {
+        ctx.principal = principal<JWTPrincipal>().toModel()
         val request = receive<Q>()
         ctx.fromTransport(request)
         processor.exec(ctx)

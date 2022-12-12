@@ -2,6 +2,8 @@ package ru.otus.music.search.common
 
 import kotlinx.datetime.Instant
 import ru.otus.music.search.common.models.*
+import ru.otus.music.search.common.permissions.MsPrincipalModel
+import ru.otus.music.search.common.permissions.MsUserPermissions
 import ru.otus.music.search.common.repo.ICompositionRepository
 import ru.otus.music.search.common.stubs.MsStub
 
@@ -18,6 +20,10 @@ data class MsContext(
 
     var requestId: MsRequestId = MsRequestId.NONE,
     var timeStart: Instant = Instant.NONE,
+
+    var principal: MsPrincipalModel = MsPrincipalModel.NONE,
+    val permissionsChain: MutableSet<MsUserPermissions> = mutableSetOf(),
+    var permitted: Boolean = false,
 
     var msRequest: MsCompositionDiscussion = MsCompositionDiscussion(),
     var filterRequest: MsFilter = MsFilter(),

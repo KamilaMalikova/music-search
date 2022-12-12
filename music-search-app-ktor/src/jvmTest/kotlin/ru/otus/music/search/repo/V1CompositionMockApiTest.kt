@@ -51,16 +51,16 @@ import ru.otus.music.search.common.models.MsSettings
 import ru.otus.music.search.common.models.MsUserId
 import ru.otus.music.search.common.repo.CompositionDbResponse
 import ru.otus.music.search.common.repo.CompositionFilterDbResponse
-import ru.otus.music.search.common.repo.inmemory.CompositionRepoInMemory
 import ru.otus.music.search.common.repo.test.CompositionRepositoryMock
 import ru.otus.music.search.module
 import ru.otus.music.search.stubs.V1StubTest
 import java.io.File
 import java.util.UUID
+import ru.otus.music.search.auth.addAuth
+import ru.otus.music.search.base.KtorAuthConfig
 
 class V1CompositionMockApiTest {
     private val uuidOld = "10000000-0000-0000-0000-000000000001"
-    private val uuidNew = "10000000-0000-0000-0000-000000000002"
     private val uuidSup = "10000000-0000-0000-0000-000000000003"
     private val initComposition = MsCompositionDiscussionStub.prepareResult {
         composition = MsComposition(
@@ -77,6 +77,7 @@ class V1CompositionMockApiTest {
 
     @Test
     fun createComposition() = testApplication {
+        val user = "test owner"
         application {
             val repo by lazy {
                 CompositionRepositoryMock(
@@ -90,7 +91,7 @@ class V1CompositionMockApiTest {
                 )
             }
             val settings by lazy { MsSettings(repoTest = repo) }
-            module(settings = settings)
+            module(settings = settings, authConfig = KtorAuthConfig.TEST)
         }
         val client = myClient()
         val createComposition = CompositionCreateObject(
@@ -107,7 +108,7 @@ class V1CompositionMockApiTest {
                 ),
                 composition = createComposition
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -121,6 +122,7 @@ class V1CompositionMockApiTest {
 
     @Test
     fun readComposition() = testApplication {
+        val user = "test user"
         application {
             val repo by lazy {
                 CompositionRepositoryMock(
@@ -133,7 +135,7 @@ class V1CompositionMockApiTest {
                 )
             }
             val settings by lazy { MsSettings(repoTest = repo) }
-            module(settings = settings)
+            module(settings = settings, authConfig = KtorAuthConfig.TEST)
         }
         val client = myClient()
         val readObject = CompositionReadObject(
@@ -148,7 +150,7 @@ class V1CompositionMockApiTest {
                 ),
                 composition = readObject
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -163,6 +165,7 @@ class V1CompositionMockApiTest {
 
     @Test
     fun `test add comment`() = testApplication {
+        val user = "user 123"
         application {
             val repo by lazy {
                 CompositionRepositoryMock(
@@ -180,7 +183,7 @@ class V1CompositionMockApiTest {
                 )
             }
             val settings by lazy { MsSettings(repoTest = repo) }
-            module(settings = settings)
+            module(settings = settings, authConfig = KtorAuthConfig.TEST)
         }
 
         val client = myClient()
@@ -201,7 +204,7 @@ class V1CompositionMockApiTest {
                 ),
                 composition = commentAddObject
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -218,6 +221,7 @@ class V1CompositionMockApiTest {
 
     @Test
     fun `test accept comment`() = testApplication {
+        val user = "user 1234"
         application {
             val repo by lazy {
                 CompositionRepositoryMock(
@@ -242,7 +246,7 @@ class V1CompositionMockApiTest {
                 )
             }
             val settings by lazy { MsSettings(repoTest = repo) }
-            module(settings = settings)
+            module(settings = settings, authConfig = KtorAuthConfig.TEST)
         }
         val client = myClient()
         val commentAcceptObject = CommentAcceptObject(
@@ -259,7 +263,7 @@ class V1CompositionMockApiTest {
                 ),
                 composition = commentAcceptObject
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -275,6 +279,7 @@ class V1CompositionMockApiTest {
 
     @Test
     fun `test decline comment`() = testApplication {
+        val user = "user 1234"
         application {
             val repo by lazy {
                 CompositionRepositoryMock(
@@ -300,7 +305,7 @@ class V1CompositionMockApiTest {
                 )
             }
             val settings by lazy { MsSettings(repoTest = repo) }
-            module(settings = settings)
+            module(settings = settings, authConfig = KtorAuthConfig.TEST)
         }
         val client = myClient()
         val commentDeclineObject = CommentDeclineObject(
@@ -317,7 +322,7 @@ class V1CompositionMockApiTest {
                 ),
                 composition = commentDeclineObject
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -332,6 +337,7 @@ class V1CompositionMockApiTest {
 
     @Test
     fun `test search`() = testApplication {
+        val user = "user 1234"
         application {
             val repo by lazy {
                 CompositionRepositoryMock(
@@ -344,7 +350,7 @@ class V1CompositionMockApiTest {
                 )
             }
             val settings by lazy { MsSettings(repoTest = repo) }
-            module(settings = settings)
+            module(settings = settings, authConfig = KtorAuthConfig.TEST)
         }
         val client = myClient()
         val filterObject = CompositionSearchFilter(
@@ -359,7 +365,7 @@ class V1CompositionMockApiTest {
                 ),
                 filter = filterObject
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -388,27 +394,7 @@ class V1CompositionMockApiTest {
             ?.let { File(it) } ?: EMPTY_FILE
 
         val uuidOld = "10000000-0000-0000-0000-000000000001"
-        val uuidNew = "10000000-0000-0000-0000-000000000002"
         val uuidSup = "10000000-0000-0000-0000-000000000003"
-        val initComposition = MsCompositionDiscussionStub.prepareResult {
-            composition = MsComposition(
-                id = MsCompositionId(uuidOld),
-                owner = MsUserId("user 1234"),
-                file = TEST_FILE
-            )
-            comment = MsComment(
-                author = MsUserId("user 123"),
-                text = "Comment"
-            )
-            comments = mutableSetOf(
-                MsComment(
-                    id = MsCommentId(uuidSup),
-                    author = MsUserId("user1"),
-                    text = "comment 1"
-                )
-            )
-            lock = MsCompositionLock(uuidOld)
-        }
     }
 
 }

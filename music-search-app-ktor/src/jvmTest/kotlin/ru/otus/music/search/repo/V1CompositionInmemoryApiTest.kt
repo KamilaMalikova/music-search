@@ -50,6 +50,8 @@ import ru.otus.music.search.common.repo.inmemory.CompositionRepoInMemory
 import ru.otus.music.search.module
 import ru.otus.music.search.stubs.V1StubTest
 import java.io.File
+import ru.otus.music.search.auth.addAuth
+import ru.otus.music.search.base.KtorAuthConfig
 
 class V1CompositionInmemoryApiTest {
     private val uuidOld = "10000000-0000-0000-0000-000000000001"
@@ -79,16 +81,17 @@ class V1CompositionInmemoryApiTest {
 
     @Test
     fun createComposition() = testApplication {
+        val user = "test owner"
         val repo = CompositionRepoInMemory(initObjects = listOf(initComposition), randomUuid = { uuidNew })
         val settings = MsSettings(repoTest = repo)
 
         application {
-            module(settings = settings)
+            module(settings = settings, authConfig = KtorAuthConfig.TEST)
         }
         val client = myClient()
         val createComposition = CompositionCreateObject(
             file = TEST_FILE,
-            owner = "test owner",
+            owner = user,
             status = DiscussionStatus.OPEN
         )
 
@@ -100,7 +103,7 @@ class V1CompositionInmemoryApiTest {
                 ),
                 composition = createComposition
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -114,11 +117,12 @@ class V1CompositionInmemoryApiTest {
 
     @Test
     fun readComposition() = testApplication {
+        val user = "test user"
         val repo = CompositionRepoInMemory(initObjects = listOf(initComposition), randomUuid = { uuidNew })
         val settings = MsSettings(repoTest = repo)
 
         application {
-            module(settings = settings)
+            module(settings = settings, authConfig = KtorAuthConfig.TEST)
         }
         val client = myClient()
         val readObject = CompositionReadObject(
@@ -133,7 +137,7 @@ class V1CompositionInmemoryApiTest {
                 ),
                 composition = readObject
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -149,17 +153,18 @@ class V1CompositionInmemoryApiTest {
 
     @Test
     fun `test add comment`() = testApplication {
+        val user = "user 123"
         val repo = CompositionRepoInMemory(initObjects = listOf(initComposition), randomUuid = { uuidNew })
         val settings = MsSettings(repoTest = repo)
 
         application {
-            module(settings = settings)
+            module(settings = settings, authConfig = KtorAuthConfig.TEST)
         }
         val client = myClient()
         val commentAddObject = CommentAddObject(
             compositionId = uuidOld,
             comment = BaseComment(
-                author = "user 123",
+                author = user,
                 text = "Comment"
             ),
             lock = uuidOld
@@ -173,7 +178,7 @@ class V1CompositionInmemoryApiTest {
                 ),
                 composition = commentAddObject
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -192,9 +197,9 @@ class V1CompositionInmemoryApiTest {
     fun `test accept comment`() = testApplication {
         val repo = CompositionRepoInMemory(initObjects = listOf(initComposition), randomUuid = { uuidNew })
         val settings = MsSettings(repoTest = repo)
-
+        val user = "user 1234"
         application {
-            module(settings = settings)
+            module(settings = settings, authConfig = KtorAuthConfig.TEST)
         }
         val client = myClient()
         val commentAcceptObject = CommentAcceptObject(
@@ -212,7 +217,7 @@ class V1CompositionInmemoryApiTest {
                 ),
                 composition = commentAcceptObject
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -232,9 +237,9 @@ class V1CompositionInmemoryApiTest {
     fun `test decline comment`() = testApplication {
         val repo = CompositionRepoInMemory(initObjects = listOf(initComposition), randomUuid = { uuidNew })
         val settings = MsSettings(repoTest = repo)
-
+        val user = "user 1234"
         application {
-            module(settings = settings)
+            module(settings = settings, authConfig = KtorAuthConfig.TEST)
         }
         val client = myClient()
         val commentDeclineObject = CommentDeclineObject(
@@ -252,7 +257,7 @@ class V1CompositionInmemoryApiTest {
                 ),
                 composition = commentDeclineObject
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -269,9 +274,9 @@ class V1CompositionInmemoryApiTest {
     fun `test search`() = testApplication {
         val repo = CompositionRepoInMemory(initObjects = listOf(initComposition), randomUuid = { uuidNew })
         val settings = MsSettings(repoTest = repo)
-
+        val user = "user 1234"
         application {
-            module(settings = settings)
+            module(settings = settings, authConfig = KtorAuthConfig.TEST)
         }
         val client = myClient()
         val filterObject = CompositionSearchFilter(
@@ -286,7 +291,7 @@ class V1CompositionInmemoryApiTest {
                 ),
                 filter = filterObject
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }

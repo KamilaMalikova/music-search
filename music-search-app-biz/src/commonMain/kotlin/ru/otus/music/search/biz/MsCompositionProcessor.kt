@@ -4,6 +4,10 @@ import ru.otus.music.search.biz.general.prepareResult
 import ru.otus.music.search.biz.groups.operation
 import ru.otus.music.search.biz.groups.stub
 import ru.otus.music.search.biz.groups.validation
+import ru.otus.music.search.biz.permissions.accessValidation
+import ru.otus.music.search.biz.permissions.chainPermissions
+import ru.otus.music.search.biz.permissions.frontPermissions
+import ru.otus.music.search.biz.permissions.searchTypes
 import ru.otus.music.search.biz.repo.repoCreateComment
 import ru.otus.music.search.biz.repo.repoCreateComposition
 import ru.otus.music.search.biz.repo.repoFilter
@@ -69,12 +73,14 @@ class MsCompositionProcessor(
 
                     finishValidation("Ending validation")
                 }
-
+                chainPermissions("Checking user permissions")
                 chain {
                     title = "Saving composition"
                     repoPrepareCreate("Preparation of object to save")
+                    accessValidation("Checking access rights")
                     repoCreateComposition("Inserting composition into db")
                 }
+                frontPermissions("Checking front grants")
                 prepareResult("Preparation of response")
             }
 
@@ -93,16 +99,18 @@ class MsCompositionProcessor(
 
                     finishValidation("Ending validation")
                 }
-
+                chainPermissions("Checking user permissions")
                 chain {
                     title = "Reading composition discussion"
                     repoReadComposition("Reading composition from DB")
+                    accessValidation("Checking access rights")
                     worker {
                         title = "Preparation read response"
                         on { state == MsState.RUNNING }
                         handle { msRepoDone = msRepoRead }
                     }
                 }
+                frontPermissions("Checking front grants")
                 prepareResult("Preparation of response")
             }
 
@@ -128,13 +136,15 @@ class MsCompositionProcessor(
 
                     finishValidation("Ending validation")
                 }
-
+                chainPermissions("Checking user permissions")
                 chain {
                     title = "Comment"
                     repoReadComposition("Reading composition from DB")
                     repoPrepareComment("Preparing comment")
+                    accessValidation("Checking access rights")
                     repoCreateComment("Creating comment")
                 }
+                frontPermissions("Checking front grants")
                 prepareResult("Preparation of response")
             }
 
@@ -154,14 +164,16 @@ class MsCompositionProcessor(
                     validateCommentIdNotEmpty("Validation of commentId")
                     finishValidation("Ending validation")
                 }
-
+                chainPermissions("Checking user permissions")
                 chain {
                     title = "Accept comment"
                     repoReadComposition("Reading composition from DB")
                     repoPrepareAccept("Preparing comment")
+                    accessValidation("Checking access rights")
                     repoUpdateComment("Update comment")
                     repoUpdateComposition("Update composition")
                 }
+                frontPermissions("Checking front grants")
                 prepareResult("Preparation of response")
             }
 
@@ -181,14 +193,16 @@ class MsCompositionProcessor(
                     validateCommentIdNotEmpty("Validation of commentId")
                     finishValidation("Ending validation")
                 }
-
+                chainPermissions("Checking user permissions")
                 chain {
                     title = "Decline comment"
                     repoReadComposition("Reading composition from DB")
                     repoPrepareDecline("Preparing comment")
+                    accessValidation("Checking access rights")
                     repoUpdateComment("Update comment")
                     repoUpdateComposition("Update composition")
                 }
+                frontPermissions("Checking front grants")
                 prepareResult("Preparation of response")
             }
 
@@ -204,12 +218,13 @@ class MsCompositionProcessor(
 
                     finishFilterValidation("Ending validation")
                 }
-
+                chainPermissions("Checking user permissions")
                 chain {
                     title = "Filter"
+                    searchTypes("Prepare search request")
                     repoFilter("Filtering in DB")
                 }
-
+                frontPermissions("Checking front grants")
                 prepareResult("Preparation of response")
             }
         }.build()

@@ -44,7 +44,7 @@ kotlin {
                 implementation(ktor("cors")) // "io.ktor:ktor-cors:$ktorVersion"
                 implementation(ktor("caching-headers"))
                 implementation(ktor("cio"))
-
+                implementation("io.ktor:ktor-server-auth:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
             }
@@ -53,6 +53,12 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+
+                implementation(project(":music-search-repo-test"))
+
+                implementation(ktor("test-host"))
+                implementation(ktor("content-negotiation", prefix = "client-"))
+                implementation(ktor("websockets", prefix = "client-"))
             }
         }
         val jvmMain by getting {
@@ -75,7 +81,7 @@ kotlin {
                 implementation(ktor("websockets")) // "io.ktor:ktor-websockets:$ktorVersion"
                 implementation(ktor("auth")) // "io.ktor:ktor-auth:$ktorVersion"
                 implementation(ktor("auth-jwt")) // "io.ktor:ktor-auth-jwt:$ktorVersion"
-
+                implementation("io.ktor:ktor-server-auth:$ktorVersion")
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
                 // transport models
@@ -86,9 +92,11 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
-                implementation(ktor("test-host")) // "io.ktor:ktor-server-test-host:$ktorVersion"
-                implementation(ktor("content-negotiation", prefix = "client-"))
-                implementation(ktor("websockets", prefix = "client-"))
+
+                implementation("io.ktor:ktor-client-auth:$ktorVersion")
+//                implementation("io.ktor:ktor-client-logging:$ktorVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-client-cio:$ktorVersion")
             }
         }
     }

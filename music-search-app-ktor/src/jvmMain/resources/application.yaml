@@ -1,0 +1,18 @@
+ktor:
+  development: true
+  deployment:
+    port: 8080
+    watch:
+      - classes
+      - resources
+  application:
+    modules:
+      - ru.otus.music.search.ApplicationKt.module
+
+jwt:
+  #  secret: "secret"
+  issuer: "http://localhost:8081/auth/realms/otus-marketplace"
+  audience: "ms-users"
+  realm: "music-search"
+  clientId: "music-search-service"
+  certUrl: "http://0.0.0.0:8081/auth/realms/music-search/protocol/openid-connect/certs"

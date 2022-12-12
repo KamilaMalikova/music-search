@@ -35,13 +35,16 @@ import ru.otus.music.search.api.v1.models.CompositionSearchResponse
 import ru.otus.music.search.api.v1.models.DiscussionStatus
 import ru.otus.music.search.common.EMPTY_FILE
 import java.io.File
+import ru.otus.music.search.auth.addAuth
+import ru.otus.music.search.base.KtorAuthConfig
 import kotlin.test.assertEquals
 import ru.otus.music.search.module
 
 class V1StubTest {
     @Test
     fun `test create route`() = testApplication {
-        application { module() }
+        val user = "test owner"
+        application { module(authConfig = KtorAuthConfig.TEST) }
         val client = myClient()
 
         val response = client.post("v1/composition/create") {
@@ -53,11 +56,11 @@ class V1StubTest {
                 ),
                 composition = CompositionCreateObject(
                     file = TEST_FILE,
-                    owner = "test owner",
+                    owner = user,
                     status = DiscussionStatus.OPEN
                 )
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -71,7 +74,8 @@ class V1StubTest {
 
     @Test
     fun `test read composition  route`() = testApplication {
-        application { module() }
+        val user = "test user"
+        application { module(authConfig = KtorAuthConfig.TEST) }
         val client = myClient()
 
         val response = client.post("v1/composition/discussion") {
@@ -85,7 +89,7 @@ class V1StubTest {
                     id = "123"
                 )
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -100,7 +104,8 @@ class V1StubTest {
 
     @Test
     fun `test add comment  route`() = testApplication {
-        application { module() }
+        val user = "test user"
+        application { module(authConfig = KtorAuthConfig.TEST) }
         val client = myClient()
 
         val response = client.post("v1/composition/comment") {
@@ -119,7 +124,7 @@ class V1StubTest {
                     )
                 )
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -136,7 +141,8 @@ class V1StubTest {
 
     @Test
     fun `test accept comment route`() = testApplication {
-        application { module() }
+        val user = "test user"
+        application { module(authConfig = KtorAuthConfig.TEST) }
         val client = myClient()
 
         val response = client.post("v1/composition/comment/accept") {
@@ -151,7 +157,7 @@ class V1StubTest {
                     commentId = "987"
                 )
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -166,7 +172,8 @@ class V1StubTest {
 
     @Test
     fun `test decline comment route`() = testApplication {
-        application { module() }
+        val user = "test user"
+        application { module(authConfig = KtorAuthConfig.TEST) }
         val client = myClient()
 
         val response = client.post("v1/composition/comment/decline") {
@@ -181,7 +188,7 @@ class V1StubTest {
                     commentId = "987"
                 )
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }
@@ -195,7 +202,8 @@ class V1StubTest {
 
     @Test
     fun `test search compositions route`() = testApplication {
-        application { module() }
+        val user = "test user"
+        application { module(authConfig = KtorAuthConfig.TEST) }
         val client = myClient()
 
         val response = client.post("v1/composition/search") {
@@ -210,7 +218,7 @@ class V1StubTest {
                     owner = "123"
                 )
             )
-
+            addAuth(id = user, config = KtorAuthConfig.TEST)
             contentType(ContentType.Application.Json)
             setBody(requestObject)
         }

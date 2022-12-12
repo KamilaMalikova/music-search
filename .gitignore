@@ -5,3 +5,4 @@ out/
 !src/**/build/
 /kotlin-js-store
 /dockers/arcadedb/
+/dockers/keycloak/

@@ -2,6 +2,7 @@ package ru.otus.music.search.biz.validation
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import ru.otus.music.search.MsCompositionDiscussionStub
 import ru.otus.music.search.biz.MsCompositionProcessor
 import ru.otus.music.search.common.EMPTY_FILE
 import ru.otus.music.search.common.MsContext
@@ -14,6 +15,8 @@ import ru.otus.music.search.common.models.MsCompositionId
 import ru.otus.music.search.common.models.MsState
 import ru.otus.music.search.common.models.MsUserId
 import ru.otus.music.search.common.models.MsWorkMode
+import ru.otus.music.search.common.permissions.MsPrincipalModel
+import ru.otus.music.search.common.permissions.MsUserGroups
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -28,6 +31,13 @@ fun validateCorrectOwnerId(command: MsCommand, processor: MsCompositionProcessor
             composition = MsComposition(
                 owner = MsUserId("12345"),
                 file = EMPTY_FILE
+            )
+        ),
+        principal = MsPrincipalModel(
+            id = MsUserId("12345"),
+            groups = setOf(
+                MsUserGroups.USER,
+                MsUserGroups.TEST,
             )
         )
     )
@@ -61,19 +71,27 @@ fun validateEmptyOwnerId(command: MsCommand, processor: MsCompositionProcessor) 
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun validateCorrectAuthorIdNotEmpty(command: MsCommand, processor: MsCompositionProcessor) = runTest {
+    val stub = MsCompositionDiscussionStub.get()
     val ctx = MsContext(
         command = command,
         state = MsState.NONE,
         workMode = MsWorkMode.TEST,
         msRequest = MsCompositionDiscussion(
             composition = MsComposition(
-                id = MsCompositionId("123456"),
-                owner = MsUserId("12345"),
+                id = stub.composition.id,
+                owner = stub.composition.owner,
                 file = EMPTY_FILE
             ),
             comment = MsComment(
                 author = MsUserId("12345"),
                 text = "Bang bang"
+            )
+        ),
+        principal = MsPrincipalModel(
+            id = MsUserId("12345"),
+            groups = setOf(
+                MsUserGroups.USER,
+                MsUserGroups.TEST,
             )
         )
     )

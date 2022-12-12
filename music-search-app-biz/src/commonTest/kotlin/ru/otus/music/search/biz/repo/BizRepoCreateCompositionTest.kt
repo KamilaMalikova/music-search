@@ -18,12 +18,12 @@ import ru.otus.music.search.common.models.MsWorkMode
 import ru.otus.music.search.common.repo.CompositionDbResponse
 import ru.otus.music.search.common.repo.test.CompositionRepositoryMock
 import java.io.File
+import ru.otus.music.search.common.permissions.MsPrincipalModel
+import ru.otus.music.search.common.permissions.MsUserGroups
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class BizRepoCreateCompositionTest {
-    private val userId = MsUserId("321")
     private val command = MsCommand.CREATE
-    private val uuid = "10000000-0000-0000-0000-000000000001"
     private val repo = CompositionRepositoryMock(
         invokeCreateComposition = {
             CompositionDbResponse(
@@ -55,7 +55,14 @@ class BizRepoCreateCompositionTest {
                     owner = MsUserId("test user"),
                     file = File("owner-123"),
                 )
-            )
+            ),
+            principal = MsPrincipalModel(
+                id = MsUserId("test user"),
+                groups = setOf(
+                    MsUserGroups.USER,
+                    MsUserGroups.TEST,
+                )
+            ),
         )
         processor.exec(ctx)
         assertEquals(MsState.FINISHING, ctx.state)
