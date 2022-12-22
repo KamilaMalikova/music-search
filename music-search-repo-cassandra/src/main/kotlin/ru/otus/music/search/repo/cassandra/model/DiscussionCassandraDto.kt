@@ -6,12 +6,11 @@ import com.datastax.oss.driver.api.mapper.annotations.Entity
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey
 import com.datastax.oss.driver.api.querybuilder.SchemaBuilder
 import java.io.File
-import ru.otus.music.search.common.EMPTY_FILE
 import ru.otus.music.search.common.models.MsComposition
 import ru.otus.music.search.common.models.MsCompositionDiscussion
 import ru.otus.music.search.common.models.MsCompositionId
 import ru.otus.music.search.common.models.MsCompositionLock
-import ru.otus.music.search.common.models.MsDiscussionStatus
+import ru.otus.music.search.common.models.MsFile
 import ru.otus.music.search.common.models.MsUserId
 
 @Entity
@@ -31,7 +30,7 @@ data class DiscussionCassandraDto(
     constructor(discussion: MsCompositionDiscussion): this(
         id = discussion.composition.id.takeIf { it != MsCompositionId.NONE }?.asString(),
         owner = discussion.composition.owner.takeIf { it != MsUserId.NONE }?.asString(),
-        fileName = discussion.composition.file.absolutePath,
+        fileName = discussion.composition.file.takeIf { it != MsFile.NONE }?.asString(),
         status = discussion.status.toTransport(),
         lock = discussion.lock.takeIf { it != MsCompositionLock.NONE }?.asString()
     )
@@ -40,7 +39,7 @@ data class DiscussionCassandraDto(
         composition = MsComposition(
             id = id?.let { MsCompositionId(it) } ?: MsCompositionId.NONE,
             owner = owner?.let { MsUserId(it) } ?: MsUserId.NONE,
-            file = fileName?.let { File(it) } ?: EMPTY_FILE
+            file = fileName?.let { MsFile(it) } ?: MsFile.NONE
         ),
         status = status.fromTransport(),
         lock = lock?.let { MsCompositionLock(it) } ?: MsCompositionLock.NONE

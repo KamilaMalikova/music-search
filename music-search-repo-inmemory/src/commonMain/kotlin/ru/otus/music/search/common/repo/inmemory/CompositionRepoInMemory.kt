@@ -153,7 +153,7 @@ class CompositionRepoInMemory(
                     )
                 )
                 else -> {
-                    val newComment = rq.comment.copy(id = commentId)
+                    val newComment = rq.comment.copy(id = commentId, lock = MsCompositionLock(randomUuid()))
                     val newDiscussion = oldDiscussion.toInternal().copy(lock = MsCompositionLock(randomUuid()))
                         .apply {
                             comments.add(newComment)
@@ -172,7 +172,6 @@ class CompositionRepoInMemory(
     override suspend fun updateComment(rq: CommentUpdateDbRequest): CompositionDbResponse {
         val key = rq.compositionId.takeIfNotNone() ?: return resultErrorEmptyId
         val commentId = rq.comment.id.takeIf { it != MsCommentId.NONE } ?: return resultErrorEmptyCommentId
-        val oldCommentLock = rq.comment.lock.takeIfNotNone() ?: return resultErrorEmptyLock
         val discussionLock = rq.lock.asString()
         val newComment = rq.comment.copy(lock = MsCompositionLock(randomUuid()))
         return mutex.withLock {

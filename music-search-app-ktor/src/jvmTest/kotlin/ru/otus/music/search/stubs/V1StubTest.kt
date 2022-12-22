@@ -33,10 +33,10 @@ import ru.otus.music.search.api.v1.models.CompositionSearchFilter
 import ru.otus.music.search.api.v1.models.CompositionSearchRequest
 import ru.otus.music.search.api.v1.models.CompositionSearchResponse
 import ru.otus.music.search.api.v1.models.DiscussionStatus
-import ru.otus.music.search.common.EMPTY_FILE
 import java.io.File
 import ru.otus.music.search.auth.addAuth
 import ru.otus.music.search.base.KtorAuthConfig
+import ru.otus.music.search.common.models.MsFile
 import kotlin.test.assertEquals
 import ru.otus.music.search.module
 
@@ -246,7 +246,6 @@ class V1StubTest {
     }
 
     private companion object {
-        val TEST_FILE = V1StubTest::class.java.classLoader.getResource("test_sample.mp3")?.path
-            ?.let { File(it) } ?: EMPTY_FILE
+        val TEST_FILE = V1StubTest::class.java.classLoader.getResource("test_sample.mp3")?.path ?: ""
     }
 }

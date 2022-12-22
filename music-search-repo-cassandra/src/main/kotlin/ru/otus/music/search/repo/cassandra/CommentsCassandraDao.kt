@@ -15,7 +15,7 @@ interface CommentsCassandraDao {
     fun create(dto: CommentCassandraDto): CompletionStage<Unit>
 
     @Select(customWhereClause = "id = :id")
-    fun read(compositionId: String, id: String): CompletionStage<CommentCassandraDto?>
+    fun read(id: String): CompletionStage<CommentCassandraDto?>
 
     @Update(customIfClause = "lock = :prevLock")
     fun update(dto: CommentCassandraDto, prevLock: String): CompletionStage<Boolean>

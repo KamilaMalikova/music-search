@@ -3,7 +3,6 @@ package ru.otus.music.search.biz.stubs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import ru.otus.music.search.biz.MsCompositionProcessor
-import ru.otus.music.search.common.EMPTY_FILE
 import ru.otus.music.search.common.MsContext
 import ru.otus.music.search.common.models.MsCommand
 import ru.otus.music.search.common.models.MsComment
@@ -16,7 +15,7 @@ import ru.otus.music.search.common.models.MsState
 import ru.otus.music.search.common.models.MsUserId
 import ru.otus.music.search.common.models.MsWorkMode
 import ru.otus.music.search.common.stubs.MsStub
-import java.io.File
+import ru.otus.music.search.common.models.MsFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -155,7 +154,7 @@ class MsCommentStubTest {
         val id = MsCompositionId("1234")
         val owner = MsUserId("567")
         val file = MsCreateTest::class.java.classLoader.getResource("test_sample.mp3")?.path
-            ?.let { File(it) } ?: EMPTY_FILE
+            ?.let { MsFile(it) } ?: MsFile.NONE
         val comment = MsComment(
             id = MsCommentId("1111"),
             author = owner,

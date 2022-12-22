@@ -13,13 +13,13 @@ fun ICorChainDsl<MsContext>.repoUpdateComment(title: String) = worker {
         val request = CommentUpdateDbRequest(
             compositionId = msRepoPrepare.composition.id,
             comment = msRepoPrepare.comment,
-            lock = msRepoPrepare.lock
+            lock = msRepoPrepare.comment.lock
         )
         val result = repository.updateComment(request)
         val resultComposition = result.data
         if (result.isSuccess && resultComposition != null) {
             msRepoDone = resultComposition
-            msRepoPrepare = msRepoPrepare.copy(lock = resultComposition.lock, comments = resultComposition.comments)
+            msRepoPrepare = msRepoPrepare.copy(comments = resultComposition.comments)
         } else {
             state = MsState.FAILING
             errors.addAll(result.errors)

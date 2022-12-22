@@ -1,0 +1,14 @@
+ktor:
+  development: true
+  deployment:
+    port: 8080
+    watch:
+      - classes
+      - resources
+jwt:
+  #  secret: "secret"
+  issuer: "http://0.0.0.0:8081/auth/realms/music-search"
+  audience: "music-search-service"
+  realm: "music-search"
+  clientId: "music-search-service"
+  certUrl: "http://0.0.0.0:8081/auth/realms/music-search/protocol/openid-connect/certs"

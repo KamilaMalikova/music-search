@@ -44,10 +44,11 @@ private fun MsCompositionDiscussion.toCompositionInfo() =
     CompositionInfo(
         id = composition.id.asString().takeIfNotBlank(),
         composition = BaseComposition(
-            file = composition.file,
+            file = composition.file.asString(),
             owner = composition.owner.asString(),
             status = status.toTransport()
-        )
+        ),
+        lock = lock.asString()
     )
 
 private fun MsDiscussionStatus.toTransport() =
@@ -82,7 +83,8 @@ private fun MsComment.toTransportBaseComment() =
 private fun MsComment.toTransportCommentInfo() =
     CommentInfo(
         id = id.asString().takeIfNotBlank(),
-        comment = toTransportBaseComment()
+        comment = toTransportBaseComment(),
+        commentLock = lock.asString().takeIfNotBlank()
     )
 
 private fun Set<MsComment>.toTransportComments() =

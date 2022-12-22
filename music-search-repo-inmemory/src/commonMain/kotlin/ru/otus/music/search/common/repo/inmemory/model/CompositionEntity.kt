@@ -1,6 +1,5 @@
 package ru.otus.music.search.common.repo.inmemory.model
 
-import ru.otus.music.search.common.EMPTY_FILE
 import ru.otus.music.search.common.models.MsComment
 import ru.otus.music.search.common.models.MsCommentId
 import ru.otus.music.search.common.models.MsCommentStatus
@@ -11,6 +10,7 @@ import ru.otus.music.search.common.models.MsCompositionLock
 import ru.otus.music.search.common.models.MsDiscussionStatus
 import ru.otus.music.search.common.models.MsUserId
 import java.io.File
+import ru.otus.music.search.common.models.MsFile
 
 data class CompositionEntity(
     val id: String? = null,
@@ -23,7 +23,7 @@ data class CompositionEntity(
     constructor(model: MsCompositionDiscussion) : this(
         id = model.composition.id.asString().takeIf { it.isNotBlank() },
         owner = model.composition.owner.asString().takeIf { it.isNotBlank() },
-        filePath = model.composition.file.absolutePath.takeIf { it.isNotBlank() },
+        filePath = model.composition.file.asString().takeIf { it.isNotBlank() },
         status = model.status.takeIf { it != MsDiscussionStatus.NONE }?.name,
         comments = model.comments.associate { it.id.asString() to CommentEntity(it) },
         lock = model.lock.asString().takeIf { it.isNotBlank() }
@@ -33,7 +33,7 @@ data class CompositionEntity(
         composition = MsComposition(
             id = id?.let { MsCompositionId(it) } ?: MsCompositionId.NONE,
             owner = owner?.let { MsUserId(it) } ?: MsUserId.NONE,
-            file = filePath?.let { File(it) } ?: EMPTY_FILE
+            file = filePath?.let { MsFile(it) } ?: MsFile.NONE
         ),
         comments = this.comments.values.map { it.toInternal() }.toMutableSet(),
         status = status?.let { MsDiscussionStatus.valueOf(it) } ?: MsDiscussionStatus.NONE,

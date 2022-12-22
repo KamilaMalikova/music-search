@@ -11,6 +11,22 @@ services:
     environment:
       KEYCLOAK_USER: otus
       KEYCLOAK_PASSWORD: otus
+      COMPOSE_PROJECT_NAME: keycloack
     ports:
       - "8081:8080"
       - "8082:9990"
+  cassandra:
+    image: cassandra:4.0
+    ports:
+      - "9042:9042"
+    volumes:
+      - ~/apps/cassandra:/var/lib/cassandra
+    environment:
+      - CASSANDRA_CLUSTER_NAME=datacenter1
+      - CASSANDRA_ENABLE_SASI_INDEXES=true
+  app:
+    build: ./../music-search-app-ktor/build/docker
+    depends_on:
+      - keycloak
+    ports:
+      - "8080:8080"

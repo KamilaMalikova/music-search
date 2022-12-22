@@ -1,0 +1,67 @@
+### Token by password
+POST http://0.0.0.0:8081/auth/realms/music-search/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=music-search-service&grant_type=password&username=otus-test&password=otus-pass
+
+> {% client.global.set("auth_token", response.body.access_token);
+client.global.set("refresh_token", response.body.refresh_token); %}
+
+### Token by refresh token
+POST http://0.0.0.0:8081/auth/realms/music-search/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=music-search-service&grant_type=refresh_token&refresh_token={{refresh_token}}
+
+
+### Create
+POST http://0.0.0.0:8080/v1/composition/discussion
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "requestType": "create",
+  "requestId": "12345",
+  "debug": {
+    "mode": "test"
+  },
+  "composition": {
+    "file": "test-file",
+    "owner": "owner123",
+    "status": "open"
+  }
+}
+
+### Get unexisted ID
+POST http://0.0.0.0:8080/v1/composition/discussion
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "requestType": "read",
+  "requestId": "12345",
+  "debug": {
+    "mode": "stub",
+    "stub": "badId"
+  },
+  "composition": {
+    "id": "1234"
+  }
+}
+
+### Get existed ID
+POST http://127.0.0.1:8080/v1/composition/discussion
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "requestType": "read",
+  "requestId": "12345",
+  "debug": {
+    "mode": "stub",
+    "stub": "success"
+  },
+  "composition": {
+    "id": "12345"
+  }
+}

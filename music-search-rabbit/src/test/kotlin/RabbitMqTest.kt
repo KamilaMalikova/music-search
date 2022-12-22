@@ -8,7 +8,6 @@ import kotlinx.coroutines.withTimeoutOrNull
 import org.testcontainers.containers.RabbitMQContainer
 import ru.otus.music.search.MsCompositionDiscussionStub
 import ru.otus.music.search.api.v1.models.*
-import ru.otus.music.search.common.EMPTY_FILE
 import ru.otus.music.search.config.RabbitConfig
 import ru.otus.music.search.config.RabbitExchangeConfiguration
 import ru.otus.music.search.controller.RabbitController
@@ -61,7 +60,7 @@ class RabbitMqTest {
     private val boltCreateV1 = with(MsCompositionDiscussionStub.get()) {
         CompositionCreateRequest(
             composition = CompositionCreateObject(
-                file = EMPTY_FILE,
+                file = "",
                 owner = composition.owner.asString()
             ),
             requestType = "create",
@@ -113,7 +112,7 @@ class RabbitMqTest {
                 val expected = MsCompositionDiscussionStub.get()
 
                 assertEquals(expected.composition.owner.asString(), response.compositionInfo?.composition?.owner)
-                assertEquals(expected.composition.file, response.compositionInfo?.composition?.file)
+                assertEquals(expected.composition.file.asString(), response.compositionInfo?.composition?.file)
             }
         }
     }

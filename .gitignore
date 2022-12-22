@@ -6,3 +6,4 @@ out/
 /kotlin-js-store
 /dockers/arcadedb/
 /dockers/keycloak/
+/gen

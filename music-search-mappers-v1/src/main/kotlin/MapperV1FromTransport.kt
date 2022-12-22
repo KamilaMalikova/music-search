@@ -19,7 +19,6 @@ import ru.otus.music.search.api.v1.models.CompositionSearchFilter
 import ru.otus.music.search.api.v1.models.CompositionSearchRequest
 import ru.otus.music.search.api.v1.models.DiscussionStatus
 import ru.otus.music.search.api.v1.models.IRequest
-import ru.otus.music.search.common.EMPTY_FILE
 import ru.otus.music.search.common.MsContext
 import ru.otus.music.search.common.models.MsCommand
 import ru.otus.music.search.common.models.MsComment
@@ -30,6 +29,7 @@ import ru.otus.music.search.common.models.MsCompositionDiscussion
 import ru.otus.music.search.common.models.MsCompositionId
 import ru.otus.music.search.common.models.MsCompositionLock
 import ru.otus.music.search.common.models.MsDiscussionStatus
+import ru.otus.music.search.common.models.MsFile
 import ru.otus.music.search.common.models.MsFilter
 import ru.otus.music.search.common.models.MsRequestId
 import ru.otus.music.search.common.models.MsUserId
@@ -53,6 +53,9 @@ private fun IRequest?.requestId() =
 
 private fun String?.toUserId() =
     this?.let { MsUserId(it) } ?: MsUserId.NONE
+
+private fun String?.toMsFile() =
+    this?.let { MsFile(it) } ?: MsFile.NONE
 
 private fun String?.toCompositionId() =
     this?.let { MsCompositionId(it) } ?: MsCompositionId.NONE
@@ -85,7 +88,7 @@ private fun CompositionDebug?.transportToStubCase(): MsStub = when(this?.stub) {
 private fun CompositionCreateObject.toInternal() =
     MsCompositionDiscussion(
         composition = MsComposition(
-            file = this.file ?: EMPTY_FILE,
+            file = file.toMsFile(),
             owner = owner.toUserId()
         )
     )

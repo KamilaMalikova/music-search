@@ -29,7 +29,7 @@ import ru.otus.music.search.api.v1.models.CompositionDebug
 import ru.otus.music.search.api.v1.models.CompositionRequestDebugMode
 import ru.otus.music.search.api.v1.models.DiscussionStatus
 import ru.otus.music.search.base.KtorAuthConfig
-import ru.otus.music.search.common.EMPTY_FILE
+import ru.otus.music.search.common.models.MsFile
 import ru.otus.music.search.common.models.MsSettings
 import ru.otus.music.search.common.repo.inmemory.CompositionRepoInMemory
 import ru.otus.music.search.module
@@ -141,7 +141,6 @@ class KeycloakAuthTest {
     }
 
     private companion object {
-        val TEST_FILE = KeycloakAuthTest::class.java.classLoader.getResource("test_sample.mp3")?.path
-            ?.let { File(it) } ?: EMPTY_FILE
+        val TEST_FILE = KeycloakAuthTest::class.java.classLoader.getResource("test_sample.mp3")?.path ?: ""
     }
 }

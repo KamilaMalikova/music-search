@@ -21,12 +21,12 @@ repositories {
 }
 
 application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
-//    mainClass.set("ru.otus.music.search.ApplicationJvmKt")
+    mainClass.set("io.ktor.server.cio.EngineMain")
+//    mainClass.set("ru.otus.music.search.ApplicationKt")
 }
 
 kotlin {
-    jvm {}
+    jvm { withJava() }
 
     sourceSets {
         val commonMain by getting {
@@ -39,11 +39,12 @@ kotlin {
                 implementation(project(":music-search-app-biz"))
                 implementation(project(":music-search-repo-test"))
                 implementation(project(":music-search-repo-inmemory"))
-
+                implementation(project(":music-search-repo-cassandra"))
                 implementation(ktor("content-negotiation")) // io.ktor:ktor-server-content-negotiation
                 implementation(ktor("cors")) // "io.ktor:ktor-cors:$ktorVersion"
                 implementation(ktor("caching-headers"))
                 implementation(ktor("cio"))
+                implementation(ktor("config-yaml"))
                 implementation("io.ktor:ktor-server-auth:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
@@ -105,8 +106,9 @@ kotlin {
 docker {
     javaApplication {
         mainClassName.set(application.mainClass.get())
-        baseImage.set("adoptopenjdk/openjdk17:alpine-jre")
-        maintainer.set("(c) Otus")
+
+        baseImage.set("adoptopenjdk/openjdk11")
+        maintainer.set("(c) Kamila")
         ports.set(listOf(8080))
         val imageName = project.name
         images.set(
@@ -118,3 +120,5 @@ docker {
         jvmArgs.set(listOf("-Xms256m", "-Xmx512m"))
     }
 }
+
+

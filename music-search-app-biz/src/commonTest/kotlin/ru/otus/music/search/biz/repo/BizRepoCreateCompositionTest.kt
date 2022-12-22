@@ -18,6 +18,7 @@ import ru.otus.music.search.common.models.MsWorkMode
 import ru.otus.music.search.common.repo.CompositionDbResponse
 import ru.otus.music.search.common.repo.test.CompositionRepositoryMock
 import java.io.File
+import ru.otus.music.search.common.models.MsFile
 import ru.otus.music.search.common.permissions.MsPrincipalModel
 import ru.otus.music.search.common.permissions.MsUserGroups
 
@@ -32,7 +33,7 @@ class BizRepoCreateCompositionTest {
                     composition = MsComposition(
                         id = MsCompositionId("test composition"),
                         owner = MsUserId("test user"),
-                        file = File("owner-123"),
+                        file = MsFile("file-123"),
                     )
                 )
             )
@@ -53,7 +54,7 @@ class BizRepoCreateCompositionTest {
             msRequest = MsCompositionDiscussion(
                 composition = MsComposition(
                     owner = MsUserId("test user"),
-                    file = File("owner-123"),
+                    file = MsFile("file-123"),
                 )
             ),
             principal = MsPrincipalModel(
@@ -68,6 +69,6 @@ class BizRepoCreateCompositionTest {
         assertEquals(MsState.FINISHING, ctx.state)
         assertNotEquals(MsCompositionId.NONE, ctx.compositionResponse.composition.id)
         assertEquals(MsUserId("test user"), ctx.compositionResponse.composition.owner)
-        assertEquals(File("owner-123"), ctx.compositionResponse.composition.file)
+        assertEquals(MsFile("file-123"), ctx.compositionResponse.composition.file)
     }
 }

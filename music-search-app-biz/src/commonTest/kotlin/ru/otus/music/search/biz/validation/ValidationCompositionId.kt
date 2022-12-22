@@ -4,7 +4,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import ru.otus.music.search.MsCompositionDiscussionStub
 import ru.otus.music.search.biz.MsCompositionProcessor
-import ru.otus.music.search.common.EMPTY_FILE
 import ru.otus.music.search.common.MsContext
 import ru.otus.music.search.common.models.MsCommand
 import ru.otus.music.search.common.models.MsComment
@@ -12,6 +11,7 @@ import ru.otus.music.search.common.models.MsCommentId
 import ru.otus.music.search.common.models.MsComposition
 import ru.otus.music.search.common.models.MsCompositionDiscussion
 import ru.otus.music.search.common.models.MsCompositionId
+import ru.otus.music.search.common.models.MsFile
 import ru.otus.music.search.common.models.MsState
 import ru.otus.music.search.common.models.MsUserId
 import ru.otus.music.search.common.models.MsWorkMode
@@ -30,7 +30,7 @@ fun validateCorrectEmptyCompositionId(command: MsCommand, processor: MsCompositi
         msRequest = MsCompositionDiscussion(
             composition = MsComposition(
                 owner = MsUserId("12345"),
-                file = EMPTY_FILE
+                file = MsFile.NONE
             )
         ),
         principal = MsPrincipalModel(
@@ -59,7 +59,7 @@ fun validateCorrectCompositionIdNotEmptyWithEmptyCommentId(command: MsCommand, p
             composition = MsComposition(
                 id = stub.composition.id,
                 owner = stub.composition.owner,
-                file = EMPTY_FILE
+                file = MsFile.NONE
             ),
             comment = MsComment(
                 author = MsUserId("12345"),
@@ -91,7 +91,7 @@ fun validateCorrectCompositionIdNotEmptyWithNotEmptyCommentId(command: MsCommand
             composition = MsComposition(
                 id = stub.composition.id,
                 owner = stub.composition.owner,
-                file = EMPTY_FILE
+                file = MsFile.NONE
             ),
             comment = MsComment(
                 id = stub.comments.firstOrNull()?.id ?: MsCommentId.NONE,
@@ -122,7 +122,7 @@ fun validateIncorrectEmptyCompositionId(command: MsCommand, processor: MsComposi
         msRequest = MsCompositionDiscussion(
             composition = MsComposition(
                 owner = MsUserId("12345"),
-                file = EMPTY_FILE
+                file = MsFile.NONE
             )
         )
     )

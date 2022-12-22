@@ -229,7 +229,6 @@ components:
       properties:
         file:
           type: string
-          format: binary
           description: Music composition
         owner:
           $ref: '#/components/schemas/UserId'
@@ -282,6 +281,8 @@ components:
           $ref: '#/components/schemas/CommentId'
         comment:
           $ref: '#/components/schemas/BaseComment'
+        commentLock:
+          $ref: '#/components/schemas/CompositionLock'
 
     CompositionCreateObject:
       allOf:

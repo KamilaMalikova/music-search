@@ -4,7 +4,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import ru.otus.music.search.MsCompositionDiscussionStub
 import ru.otus.music.search.biz.MsCompositionProcessor
-import ru.otus.music.search.common.EMPTY_FILE
 import ru.otus.music.search.common.MsContext
 import ru.otus.music.search.common.models.MsCommand
 import ru.otus.music.search.common.models.MsComment
@@ -12,6 +11,7 @@ import ru.otus.music.search.common.models.MsCommentId
 import ru.otus.music.search.common.models.MsComposition
 import ru.otus.music.search.common.models.MsCompositionDiscussion
 import ru.otus.music.search.common.models.MsCompositionId
+import ru.otus.music.search.common.models.MsFile
 import ru.otus.music.search.common.models.MsState
 import ru.otus.music.search.common.models.MsUserId
 import ru.otus.music.search.common.models.MsWorkMode
@@ -30,7 +30,7 @@ fun validateCorrectOwnerId(command: MsCommand, processor: MsCompositionProcessor
         msRequest = MsCompositionDiscussion(
             composition = MsComposition(
                 owner = MsUserId("12345"),
-                file = EMPTY_FILE
+                file = MsFile.NONE
             )
         ),
         principal = MsPrincipalModel(
@@ -55,7 +55,7 @@ fun validateEmptyOwnerId(command: MsCommand, processor: MsCompositionProcessor) 
         workMode = MsWorkMode.TEST,
         msRequest = MsCompositionDiscussion(
             composition = MsComposition(
-                file = EMPTY_FILE
+                file = MsFile.NONE
             )
         )
     )
@@ -80,7 +80,7 @@ fun validateCorrectAuthorIdNotEmpty(command: MsCommand, processor: MsComposition
             composition = MsComposition(
                 id = stub.composition.id,
                 owner = stub.composition.owner,
-                file = EMPTY_FILE
+                file = MsFile.NONE
             ),
             comment = MsComment(
                 author = MsUserId("12345"),
@@ -111,7 +111,7 @@ fun validateIncorrectEmptyAuthorId(command: MsCommand, processor: MsCompositionP
             composition = MsComposition(
                 id = MsCompositionId("1234"),
                 owner = MsUserId("12345"),
-                file = EMPTY_FILE
+                file = MsFile.NONE
             ),
             comment = MsComment(
                 id = MsCommentId("12345"),

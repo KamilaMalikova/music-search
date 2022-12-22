@@ -13,23 +13,27 @@ import ru.otus.music.search.common.models.MsUserId
 
 @Entity
 data class CommentCassandraDto(
-    @field:CqlName(COLUMN_COMPOSITION_ID)
-//    @field:PartitionKey(0)
-    val discussionId: String? = null,
     @field:CqlName(COLUMN_ID)
     @field:PartitionKey(0)
     val id: String? = null,
+
+    @field:CqlName(COLUMN_COMPOSITION_ID)
+    val compositionId: String? = null,
+
     @field:CqlName(COLUMN_AUTHOR)
     val author: String? = null,
+
     @field:CqlName(COLUMN_TEXT)
     val commentText: String? = null,
+
     @field:CqlName(COLUMN_STATUS)
     val commentStatus: CommentStatus? = null,
+
     @field:CqlName(COLUMN_LOCK)
     val lock: String? = null
 ) {
-    constructor(discussionId: MsCompositionId, msComment: MsComment) : this(
-        discussionId = discussionId.takeIf { it != MsCompositionId.NONE }?.asString(),
+    constructor(compositionId: MsCompositionId, msComment: MsComment) : this(
+        compositionId = compositionId.takeIf { it != MsCompositionId.NONE }?.asString(),
         id = msComment.id.takeIf { it != MsCommentId.NONE }?.asString(),
         author = msComment.author.takeIf { it != MsUserId.NONE }?.asString(),
         commentText = msComment.text.takeIf { it.isNotBlank() },
@@ -41,7 +45,8 @@ data class CommentCassandraDto(
         id = id?.let { MsCommentId(it) } ?: MsCommentId.NONE,
         author = author?.let { MsUserId(it) } ?: MsUserId.NONE,
         text = commentText ?: "",
-        status = commentStatus.fromTransport()
+        status = commentStatus.fromTransport(),
+        lock = lock?.let { MsCompositionLock(it) } ?: MsCompositionLock.NONE
     )
 
     companion object {

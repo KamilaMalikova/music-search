@@ -11,6 +11,7 @@ import ru.otus.music.search.common.models.MsCommand
 import ru.otus.music.search.common.models.MsComposition
 import ru.otus.music.search.common.models.MsCompositionDiscussion
 import ru.otus.music.search.common.models.MsCompositionId
+import ru.otus.music.search.common.models.MsFile
 import ru.otus.music.search.common.models.MsSettings
 import ru.otus.music.search.common.models.MsState
 import ru.otus.music.search.common.models.MsUserId
@@ -49,7 +50,7 @@ class MsAuthTest {
             msRequest = MsCompositionDiscussion(
                 composition = MsComposition(
                     owner = userId,
-                    file = File("owner-123"),
+                    file = MsFile("file-123"),
                 )
             )
         )
@@ -57,7 +58,7 @@ class MsAuthTest {
         assertEquals(MsState.FINISHING, ctx.state)
         assertNotEquals(MsCompositionId.NONE, ctx.compositionResponse.composition.id)
         assertEquals(userId, ctx.compositionResponse.composition.owner)
-        assertEquals(File("owner-123"), ctx.compositionResponse.composition.file)
+        assertEquals(MsFile("file-123"), ctx.compositionResponse.composition.file)
         with(ctx.compositionResponse) {
             assertTrue { composition.id.asString().isNotBlank() }
             assertContains(permissionsClient, MsPermissionClient.READ)

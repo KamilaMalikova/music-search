@@ -6,12 +6,14 @@ import kotlinx.coroutines.future.await
 import kotlinx.coroutines.withTimeout
 import org.slf4j.LoggerFactory
 import ru.otus.music.search.common.helpers.asMsError
+import ru.otus.music.search.common.models.MsComment
 import ru.otus.music.search.common.models.MsCommentId
 import ru.otus.music.search.common.models.MsComposition
 import ru.otus.music.search.common.models.MsCompositionDiscussion
 import ru.otus.music.search.common.models.MsCompositionId
 import ru.otus.music.search.common.models.MsCompositionLock
 import ru.otus.music.search.common.models.MsError
+import ru.otus.music.search.common.models.MsUserId
 import ru.otus.music.search.common.repo.CommentDbRequest
 import ru.otus.music.search.common.repo.CommentIdDbRequest
 import ru.otus.music.search.common.repo.CommentUpdateDbRequest
@@ -81,11 +83,17 @@ class RepoCassandra(
                 val read = compositionDao.read(id.asString()).await()
                 if (read == null) ID_NOT_FOUND
                 else {
-                    val commentRead = commentDao.read(id.asString(), commentId.asString()).await()
+                    val commentRead = commentDao.read(commentId.asString()).await()
                     if (commentRead == null) ID_NOT_FOUND
                     else {
                         val success = daoAction().await()
-                        if (success) CompositionDbResponse.success(successResult ?: read.toModel())
+                        val comment = successResult?.comment?.copy(
+                            author = commentRead.author?.let { MsUserId(it) } ?: MsUserId.NONE,
+                            text = commentRead.commentText ?: ""
+                        )
+                        if (success) CompositionDbResponse.success(successResult?.copy(
+                            comment = comment ?: MsComment()
+                        ) ?: read.toModel())
                         else CompositionDbResponse(
                             read.toModel().copy(comment = commentRead.toModel()),
                             false,
@@ -215,17 +223,40 @@ class RepoCassandra(
     override suspend fun updateComment(rq: CommentUpdateDbRequest): CompositionDbResponse {
         val prevLock = rq.comment.lock.asString()
 
-        val dto = CommentCassandraDto(rq.compositionId, rq.comment.copy(lock = MsCompositionLock(randomUuid())))
-
-        return readAndDoCommentDbAction(
+        return if (rq.compositionId == MsCompositionId.NONE || rq.comment.id == MsCommentId.NONE)
+            ID_IS_EMPTY
+        else doDbAction(
             "update comment",
-            rq.compositionId,
-            rq.comment.id,
-            MsCompositionDiscussion(
-                composition = MsComposition( id = rq.compositionId),
-                comment = rq.comment
-            ),
-            { commentDao.update(dto, prevLock) },
+            {
+                val read = compositionDao.read(rq.compositionId.asString()).await()
+                if (read == null) ID_NOT_FOUND
+                else {
+                    val commentRead = commentDao.read(rq.comment.id.asString()).await()
+                    if (commentRead == null) ID_NOT_FOUND
+                    else {
+                        val dto = CommentCassandraDto(
+                            rq.compositionId,
+                            rq.comment.copy(
+                                lock = MsCompositionLock(randomUuid()),
+                                author = commentRead.author?.let { MsUserId(it) } ?: MsUserId.NONE,
+                                text = commentRead.commentText ?: ""
+                            )
+                        )
+                        val success = commentDao.update(dto, prevLock).await()
+                        val successResult = MsCompositionDiscussion(
+                            composition = MsComposition( id = rq.compositionId),
+                            comment = dto.toModel()
+                        )
+                        if (success) CompositionDbResponse.success(successResult)
+                        else CompositionDbResponse(
+                            read.toModel().copy(comment = commentRead.toModel()),
+                            false,
+                            CONCURRENT_MODIFICATION.errors
+                        )
+                    }
+
+                }
+            },
             ::errorToResponse
         )
     }

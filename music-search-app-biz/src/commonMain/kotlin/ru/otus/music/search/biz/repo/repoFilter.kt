@@ -14,29 +14,15 @@ fun ICorChainDsl<MsContext>.repoFilter(title: String) = worker {
     description = "Filtering compositions"
     on { state == MsState.RUNNING }
     handle {
-        val msRequest = msRepoPrepare
         val filter = CompositionFilterDbRequest(
-            ownerId = msRequest.composition.owner,
-            status = when (msRequest.status) {
+            ownerId = filterValidated.ownerId,
+            status = when (filterValidated.discussionStatus) {
                 MsDiscussionStatus.OPEN -> MsDiscussionStatus.OPEN
                 MsDiscussionStatus.CLOSED -> MsDiscussionStatus.CLOSED
                 MsDiscussionStatus.NONE -> MsDiscussionStatus.NONE
             }
         )
-        val dbResponse = if (filter.status == MsDiscussionStatus.NONE) {
-            CompositionFilterDbResponse(
-                data = null,
-                isSuccess = false,
-                errors = listOf(
-                    MsError(
-                        field = "status",
-                        message = "Status of discussion must not be empty"
-                    )
-                )
-            )
-        } else {
-            repository.filter(filter)
-        }
+        val dbResponse =  repository.filter(filter)
 
         val resultCompositions = dbResponse.data
         when {

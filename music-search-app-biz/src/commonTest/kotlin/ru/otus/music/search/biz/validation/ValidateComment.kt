@@ -4,7 +4,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import ru.otus.music.search.MsCompositionDiscussionStub
 import ru.otus.music.search.biz.MsCompositionProcessor
-import ru.otus.music.search.common.EMPTY_FILE
 import ru.otus.music.search.common.MsContext
 import ru.otus.music.search.common.models.MsCommand
 import ru.otus.music.search.common.models.MsComment
@@ -12,6 +11,7 @@ import ru.otus.music.search.common.models.MsCommentId
 import ru.otus.music.search.common.models.MsComposition
 import ru.otus.music.search.common.models.MsCompositionDiscussion
 import ru.otus.music.search.common.models.MsCompositionId
+import ru.otus.music.search.common.models.MsFile
 import ru.otus.music.search.common.models.MsState
 import ru.otus.music.search.common.models.MsUserId
 import ru.otus.music.search.common.models.MsWorkMode
@@ -31,7 +31,7 @@ fun validateCorrectComment(command: MsCommand, processor: MsCompositionProcessor
             composition = MsComposition(
                 id = MsCompositionId("1234"),
                 owner = MsUserId("12345"),
-                file = EMPTY_FILE
+                file = MsFile.NONE
             ),
             comment = MsComment(
                 author = MsUserId("1234"),
@@ -62,7 +62,7 @@ fun validateTrimComment(command: MsCommand, processor: MsCompositionProcessor) =
             composition = MsComposition(
                 id = MsCompositionId("1234"),
                 owner = MsUserId("12345"),
-                file = EMPTY_FILE
+                file = MsFile.NONE
             ),
             comment = MsComment(
                 author = MsUserId("12345"),
@@ -93,7 +93,7 @@ fun validateIncorrectEmptyComment(command: MsCommand, processor: MsCompositionPr
             composition = MsComposition(
                 id = MsCompositionId("1234"),
                 owner = MsUserId("12345"),
-                file = EMPTY_FILE
+                file = MsFile.NONE
             ),
             comment = MsComment(
                 author = MsUserId("1234")
@@ -121,7 +121,7 @@ fun validateIncorrectNoContentInComment(command: MsCommand, processor: MsComposi
             composition = MsComposition(
                 id = MsCompositionId("1234"),
                 owner = MsUserId("12345"),
-                file = EMPTY_FILE
+                file = MsFile.NONE
             ),
             comment = MsComment(
                 author = MsUserId("1234"),
@@ -179,7 +179,7 @@ fun validateIncorrectEmptyCommentId(command: MsCommand, processor: MsComposition
             composition = MsComposition(
                 id = MsCompositionId("1234"),
                 owner = MsUserId("12345"),
-                file = EMPTY_FILE
+                file = MsFile.NONE
             ),
             comment = MsComment()
         )

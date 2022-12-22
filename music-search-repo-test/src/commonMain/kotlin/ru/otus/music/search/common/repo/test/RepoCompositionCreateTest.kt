@@ -17,7 +17,7 @@ abstract class RepoCompositionCreateTest {
     protected val createObj = MsCompositionDiscussion(
         composition = MsComposition(
             owner = MsUserId("test user"),
-            file = File("owner-123"),
+            file = MsFile("file-123"),
         )
     )
 

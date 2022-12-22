@@ -36,6 +36,6 @@ class SerializationTest {
     }
 
     private companion object {
-        val TEST_FILE = File("${System.getProperty("user.dir")}/test-file")
+        val TEST_FILE ="${System.getProperty("user.dir")}/test-file"
     }
 }

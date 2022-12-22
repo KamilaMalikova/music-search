@@ -39,7 +39,7 @@ class MapperTest {
 
         assertEquals(MsStub.SUCCESS, context.stubCase)
         assertEquals(MsWorkMode.STUB, context.workMode)
-        assertEquals(TEST_FILE, context.msRequest.composition.file)
+        assertEquals(TEST_FILE, context.msRequest.composition.file.asString())
     }
 
     @Test
@@ -73,6 +73,6 @@ class MapperTest {
     }
 
     private companion object {
-        val TEST_FILE = File("${System.getProperty("user.dir")}/test-file")
+        val TEST_FILE = "${System.getProperty("user.dir")}/test-file"
     }
 }
